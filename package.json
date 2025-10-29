@@ -1,0 +1,32 @@
+{
+  "name": "aurora-db-lab",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Aurora-N/scnu-db#readme",
+  "bugs": {
+    "url": "https://github.com/Aurora-N/scnu-db/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aurora-N/scnu-db.git"
+  },
+  "license": "ISC",
+  "author": "Aurora-N",
+  "workspaces": [
+    "server",
+    "web-app"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "install:all": "npm install",
+    "dev:all": "concurrently \"npm:dev:server\" \"npm:dev:web\"",
+    "dev:server": "npm run dev -w @aurora-db-lab/server",
+    "dev:web": "npm run dev -w @aurora-db-lab/web-app",
+    "build:web": "npm run build -w @aurora-db-lab/web-app"
+  },
+  "keywords": [],
+  "type": "module",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
