@@ -1,17 +1,21 @@
 import express from "express";
 import pkg from "pg";
 const { Pool } = pkg;
+import { config } from "./utils/env.js";
 
 const app = express();
 app.use(express.json());
 
+// import { initializeDatabase } from "./utils/init-db.js";
+// initializeDatabase();
+
 // 创建连接池
 const pool = new Pool({
-  user: "postgres",     // 用户名
-  host: "localhost",    // 主机
-  database: "mydb",     // 数据库名
-  password: "123456",   // 密码
-  port: 5432,           // 默认端口
+  user: config.DB_USER, // 用户名
+  host: config.DB_HOST, // 主机
+  database: config.DB_NAME, // 数据库名
+  password: config.DB_PASSWORD, // 密码
+  port: config.DB_PORT, // 默认端口
 });
 
 // 测试连接
@@ -28,7 +32,7 @@ app.get("/test-db", async (req, res) => {
 // 查询数据示例
 app.get("/users", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM users");
+    const result = await pool.query(`SELECT * FROM "User"`);
     res.json(result.rows);
   } catch (err) {
     console.error(err);
