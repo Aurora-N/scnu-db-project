@@ -6,9 +6,6 @@ import { config } from "./utils/env.js";
 const app = express();
 app.use(express.json());
 
-// import { initializeDatabase } from "./utils/init-db.js";
-// initializeDatabase();
-
 // 创建连接池
 const pool = new Pool({
   user: config.DB_USER, // 用户名
@@ -32,7 +29,7 @@ app.get("/test-db", async (req, res) => {
 // 查询数据示例
 app.get("/users", async (req, res) => {
   try {
-    const result = await pool.query(`SELECT * FROM "User"`);
+    const result = await pool.query(`SELECT * FROM users`);
     res.json(result.rows);
   } catch (err) {
     console.error(err);
