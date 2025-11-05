@@ -6,14 +6,17 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon ./index.js",
-    "init:db": "node ./utils/init-db.js"
+    "init:db": "node ./scripts/initDatabase.js",
+    "generate-token": "node ./scripts/generateToken.js"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-async-handler": "^1.2.0",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.3"
   },
   "devDependencies": {

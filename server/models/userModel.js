@@ -6,9 +6,15 @@ export const findAllUsers = async () => {
   return result.rows;
 };
 
-// 获取单个用户
+// 通过id获取单个用户
 export const findUserById = async (id) => { 
   const result = await pool.query('SELECT * FROM users WHERE user_id = $1', [id]);
+  return result.rows[0];
+};
+
+// 通过phone_number获取单个用户
+export const findUserByPhoneNumber = async (phone_number) => {
+  const result = await pool.query('SELECT * FROM users WHERE phone_number = $1', [phone_number]);
   return result.rows[0];
 };
 

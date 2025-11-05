@@ -1,6 +1,6 @@
 // 导入 'pg' 库的 Client
 import { Client } from "pg";
-import { config } from "./env.js";
+import { config } from "../utils/env.js";
 
 // SQL DDL 语句
 const sqlScript = `
