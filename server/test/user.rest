@@ -1,0 +1,10 @@
+# POST http://localhost:3000/users
+# Content-Type: application/json
+
+# {
+#     "username": "first_user",
+#     "phone_number": "12345678901",
+#     "password": "testpassword"
+# }
+
+GET http://localhost:3000/users/2

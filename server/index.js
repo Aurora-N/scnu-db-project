@@ -1,32 +1,13 @@
 import express from "express";
-import { pool } from "./db.js";
-import jsonResponse from "./middlewares/jsonResponse.js";
+import responseHandler from "./middlewares/responseHandler.js";
+import usersRoutes from "./routes/users.js";
+import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
 app.use(express.json());
-app.use(jsonResponse); 
-
-// 测试连接
-app.get("/test-db", async (req, res) => {
-  try {
-    const result = await pool.query("SELECT NOW()");
-    res.json({ time: result.rows[0].now });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "数据库连接失败" });
-  }
-});
-
-// 查询数据示例
-app.get("/users", async (req, res) => {
-  try {
-    const result = await pool.query(`SELECT * FROM users`);
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "查询失败" });
-  }
-});
+app.use(responseHandler);
+app.use(usersRoutes);
+app.use(errorHandler);
 
 // 启动服务
 app.listen(3000, () => {

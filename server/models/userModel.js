@@ -2,30 +2,30 @@ import { pool } from "../db.js";
 
 // 获取所有用户
 export const findAllUsers = async () => {
-  const result = await pool.query('SELECT * FROM users ORDER BY id');
+  const result = await pool.query('SELECT * FROM users ORDER BY user_id');
   return result.rows;
 };
 
 // 获取单个用户
 export const findUserById = async (id) => { 
-  const result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+  const result = await pool.query('SELECT * FROM users WHERE user_id = $1', [id]);
   return result.rows[0];
 };
 
 // 新建用户
-export const createUser = async (name, email) => {
+export const createUser = async (username, phone_number, password_hash) => {
   const result = await pool.query(
-    'INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *',
-    [name, email]
+    'INSERT INTO users (username, phone_number, password_hash) VALUES ($1, $2, $3) RETURNING *',
+    [username, phone_number, password_hash]
   );
   return result.rows[0];
 };
 
 // 更新用户
-export const updateUser = async (id, name, email) => {
+export const updateUser = async (id, username, phone_number, password_hash) => {
   const result = await pool.query(
-    'UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING *',
-    [name, email, id]
+    'UPDATE users SET username = $1, phone_number = $2, password_hash = $3 WHERE user_id = $4 RETURNING *',
+    [username, phone_number, password_hash, id]
   );
   return result.rows[0];
 };
@@ -33,7 +33,7 @@ export const updateUser = async (id, name, email) => {
 // 删除用户
 export const removeUser = async (id) => {
   const result = await pool.query(
-    'DELETE FROM users WHERE id = $1 RETURNING *',
+    'DELETE FROM users WHERE user_id = $1 RETURNING *',
     [id]
   );
   return result.rows[0];

@@ -1,65 +1,42 @@
 // 用户控制器
-import User from '../models/userModel.js';
+import * as User from '../models/userModel.js';
+import asyncHandler from 'express-async-handler';
 
 // 获取所有用户
-export const getAllUsers = async (req, res) => {
-  try {
-    const users = await User.findAllUsers();
-    res.json(users);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
-  }
-};
+export const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await User.findAllUsers();
+  res.json(users);
+});
 
 // 获取单个用户
-export const getUserById = async (req, res) => {
+export const getUserById = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  try {
-    const user = await User.findUserById(id);
-    if (!user) return res.status(404).send('User not found');
-    res.json(user);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
-  }
-};
+  const user = await User.findUserById(id);
+  if (!user) return res.status(404).json({ _error: 'User not found' });
+  res.json({ user, _message: "User founded" });
+});
 
 // 添加用户
-export const createUser = async (req, res) => {
-  const { name, email } = req.body;
-  try {
-    const newUser = await User.createUser(name, email);
-    res.status(201).json(newUser);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
-  }
-};
+export const createUser = asyncHandler(async (req, res) => {
+  console.log('User create request:', req.body);
+  const { username, phone_number, password } = req.body;
+  const newUser = await User.createUser(username, phone_number, password);
+  res.status(201).json(newUser);
+});
 
 // 更新用户
-export const updateUser = async (req, res) => {
+export const updateUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name, email } = req.body;
-  try {
-    const updatedUser = await User.updateUser(id, name, email);
-    if (!updatedUser) return res.status(404).send('User not found');
-    res.json(updatedUser);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
-  }
-};
+  const { username, phone_number, password_hash } = req.body;
+  const updatedUser = await User.updateUser(id, username, phone_number, password_hash);
+  if (!updatedUser) return res.status(404).json({ _error: 'User not found' });
+  res.json(updatedUser);
+});
 
 // 删除用户
-export const deleteUser = async (req, res) => {
+export const deleteUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  try {
-    const deletedUser = await User.removeUser(id);
-    if (!deletedUser) return res.status(404).send('User not found');
-    res.json({ message: 'User deleted', user: deletedUser });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
-  }
-};
+  const deletedUser = await User.removeUser(id);
+  if (!deletedUser) return res.status(404).json({ error: 'User not found' });
+  res.json({ message: 'User deleted', user: deletedUser });
+});
