@@ -1,0 +1,17 @@
+# POST http://localhost:3000/register
+# Content-Type: application/json
+
+# {
+#   "phone_number": "12345678901",
+#   "username": "first_user",
+#   "password": "testpassword"
+# }
+
+
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "phone_number": "12345678901",
+  "password": "testpassword"
+}

@@ -1,41 +1,15 @@
 import express from "express";
-import pkg from "pg";
-const { Pool } = pkg;
-import { config } from "./utils/env.js";
+import responseHandler from "./middlewares/responseHandler.js";
+import usersRoutes from "./routes/users.js";
+import authRoutes from "./routes/auth.js";
+import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
 app.use(express.json());
-
-// 创建连接池
-const pool = new Pool({
-  user: config.DB_USER, // 用户名
-  host: config.DB_HOST, // 主机
-  database: config.DB_NAME, // 数据库名
-  password: config.DB_PASSWORD, // 密码
-  port: config.DB_PORT, // 默认端口
-});
-
-// 测试连接
-app.get("/test-db", async (req, res) => {
-  try {
-    const result = await pool.query("SELECT NOW()");
-    res.json({ time: result.rows[0].now });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "数据库连接失败" });
-  }
-});
-
-// 查询数据示例
-app.get("/users", async (req, res) => {
-  try {
-    const result = await pool.query(`SELECT * FROM users`);
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "查询失败" });
-  }
-});
+app.use(responseHandler);
+app.use(usersRoutes);
+app.use(authRoutes);
+app.use(errorHandler);
 
 // 启动服务
 app.listen(3000, () => {
