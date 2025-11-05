@@ -18,6 +18,8 @@ build/
 .env.test.local
 .env.production.local
 *.env
+# This is for testing
+!/server/.env
 
 # Logs
 logs
