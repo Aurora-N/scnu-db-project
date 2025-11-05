@@ -1,0 +1,23 @@
+GET http://localhost:3000/products/query/小米
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjIzNTU0MzYsImV4cCI6MTc2MjM2MjYzNn0.kY_3wbNUPWnYAtq4eiKdIJuLxJY1tZswN3c2odZ83Vo
+
+# POST http://localhost:3000/products
+# Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjIzNTU0MzYsImV4cCI6MTc2MjM2MjYzNn0.kY_3wbNUPWnYAtq4eiKdIJuLxJY1tZswN3c2odZ83Vo
+
+# {
+#   "name": "小米 Su7",
+#   "description": "你的第一台超跑",
+#   "price": "399999",
+#   "stock_quantity": "1"
+# }
+
+# POST http://localhost:3000/products/buy
+# Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjIzNTU0MzYsImV4cCI6MTc2MjM2MjYzNn0.kY_3wbNUPWnYAtq4eiKdIJuLxJY1tZswN3c2odZ83Vo
+
+# {
+#   "productId": "1",
+#   "quantity": "1"
+# }
