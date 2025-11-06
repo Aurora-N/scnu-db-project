@@ -13,7 +13,14 @@ export const createOrder = asyncHandler(async (req, res) => {
   }
 
   try {
-    const newOrder = await OrderModel.createOrder(userId, shippingAddress, items);
+    // 转换字段名：驼峰命名 -> 下划线命名
+    const formattedItems = items.map(item => ({
+      product_id: item.productId,
+      quantity: item.quantity,
+      unit_price: item.unitPrice
+    }));
+
+    const newOrder = await OrderModel.createOrder(userId, shippingAddress, formattedItems);
     res.status(201).json(newOrder);
   } catch (error) {
     console.error('Error creating order:', error);
@@ -75,3 +82,11 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
     res.status(500).json({ _error: 'Failed to update order status.' });
   }
 });
+
+// 获取订单项目
+export const getOrderItemByOrderId = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const orderItems = await OrderModel.getOrderItemByOrderId(id);
+  if (!orderItems) return res.status(404).json({ _error: 'Order not found' });
+  res.json(orderItems);
+}); 

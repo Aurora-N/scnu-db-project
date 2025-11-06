@@ -1,20 +1,41 @@
-POST http://localhost:3000/orders
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjIzNTU0MzYsImV4cCI6MTc2MjM2MjYzNn0.kY_3wbNUPWnYAtq4eiKdIJuLxJY1tZswN3c2odZ83Vo
+# POST http://localhost:3000/orders
+# Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc
 
-{
-  "userId": "1",
-  "shippingAddress": "1",
-  "items": [
-    {
-        "productId": "4",
-        "quantity": "12",
-        "unitPrice": "23313.00"
-      },
-      {
-        "productId": "5",
-        "quantity": "13",
-        "unitPrice": "3616666.00"
-      }
-  ]
-}
+# {
+#   "userId": "1",
+#   "shippingAddress": "新的好货",
+#   "items": [
+#     {
+#         "productId": "1",
+#         "quantity": "1",
+#         "unitPrice": "233.00"
+#       },
+#       {
+#         "productId": "2",
+#         "quantity": "2",
+#         "unitPrice": "361.00"
+#       }
+#   ]
+# }
+
+# GET http://localhost:3000/orders/12
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc
+
+# GET http://localhost:3000/orders/user/1
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc
+
+# DELETE http://localhost:3000/orders/6
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc
+
+# PUT http://localhost:3000/orders/7/status
+# Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc
+
+# {
+#   "status": "paid"
+# }
+
+
+# GET http://localhost:3000/orders/12/items
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc

@@ -20,4 +20,7 @@ router.delete(`${BASE_URL}/:id`, apiAuthHandler, orderController.deleteOrderById
 // 更新订单状态
 router.put(`${BASE_URL}/:id/status`, apiAuthHandler, orderController.updateOrderStatus);
 
+// 获取订单项目
+router.get(`${BASE_URL}/:id/items`, apiAuthHandler, orderController.getOrderItemByOrderId);
+
 export default router;
