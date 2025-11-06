@@ -1,0 +1,48 @@
+### 商品分类管理测试
+
+@baseUrl = http://localhost:3000
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc
+
+### 获取所有商品分类
+GET {{baseUrl}}/categories
+Content-Type: application/json
+Authorization: {{token}}
+
+### 获取指定ID的商品分类
+GET {{baseUrl}}/categories/detail/1
+Content-Type: application/json
+Authorization: {{token}}
+
+### 创建商品分类
+POST {{baseUrl}}/categories
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "name": "衣服",
+  "description": "各类衣服，包括T恤、裤子、连衣裙等"
+}
+
+### 更新商品分类
+PUT {{baseUrl}}/categories/1
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "name": "数码产品",
+  "description": "更新后的描述"
+}
+
+### 删除商品分类
+DELETE {{baseUrl}}/categories/1
+Authorization: {{token}}
+
+### 获取分类下的所有商品
+GET {{baseUrl}}/categories/1/products
+Content-Type: application/json
+Authorization: {{token}}
+
+### 获取分类详情（包含商品列表）
+GET {{baseUrl}}/categories/1/with-products
+Content-Type: application/json
+Authorization: {{token}}

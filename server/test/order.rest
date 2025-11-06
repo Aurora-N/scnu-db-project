@@ -1,41 +1,51 @@
-# POST http://localhost:3000/orders
-# Content-Type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc
+### 订单API测试
+@baseUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0NDM5NTAsImV4cCI6MTc2MjQ1MTE1MH0.umudpI4mWyG1qaxp0dySnn2QcCJJQJPVxd0l-q2iv6k
+@userId = 1
 
-# {
-#   "userId": "1",
-#   "shippingAddress": "新的好货",
-#   "items": [
-#     {
-#         "productId": "1",
-#         "quantity": "1",
-#         "unitPrice": "233.00"
-#       },
-#       {
-#         "productId": "2",
-#         "quantity": "2",
-#         "unitPrice": "361.00"
-#       }
-#   ]
-# }
+### 创建新订单
+POST {{baseUrl}}/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
 
-# GET http://localhost:3000/orders/12
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc
+{
+  "userId": "{{userId}}",
+  "shippingAddress": "新的好货",
+  "items": [
+    {
+      "productId": "1",
+      "quantity": "1",
+      "unitPrice": "233.00"
+    },
+    {
+      "productId": "2",
+      "quantity": "2",
+      "unitPrice": "361.00"
+    }
+  ]
+}
 
-# GET http://localhost:3000/orders/user/1
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc
+### 通过ID获取订单详情
+GET {{baseUrl}}/orders/12
+Authorization: Bearer {{token}}
 
-# DELETE http://localhost:3000/orders/6
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc
+### 获取用户所有订单
+GET {{baseUrl}}/orders/user/{{userId}}
+Authorization: Bearer {{token}}
 
-# PUT http://localhost:3000/orders/7/status
-# Content-Type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc
+### 获取订单商品列表
+GET {{baseUrl}}/orders/12/items
+Authorization: Bearer {{token}}
 
-# {
-#   "status": "paid"
-# }
+### 更新订单状态
+PUT {{baseUrl}}/orders/12/status
+Content-Type: application/json
+Authorization: Bearer {{token}}
 
+{
+  "status": "paid"
+}
 
-# GET http://localhost:3000/orders/12/items
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc
+### 删除订单
+DELETE {{baseUrl}}/orders/6
+Authorization: Bearer {{token}}
