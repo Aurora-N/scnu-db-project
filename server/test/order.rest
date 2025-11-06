@@ -1,0 +1,65 @@
+### 订单API测试
+@baseUrl = http://localhost:3000
+@phoneNumber = 12345678901
+@password = testpassword
+
+### 登录获取token
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "phone_number": "{{phoneNumber}}",
+  "password": "{{password}}"
+}
+
+###
+@token = {{login.response.body.data.*}}
+@userId = 1
+
+### 创建新订单
+POST {{baseUrl}}/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "userId": "{{userId}}",
+  "shippingAddress": "新的好货",
+  "items": [
+    {
+      "productId": "1",
+      "quantity": "1",
+      "unitPrice": "233.00"
+    },
+    {
+      "productId": "2",
+      "quantity": "2",
+      "unitPrice": "361.00"
+    }
+  ]
+}
+
+### 通过ID获取订单详情
+GET {{baseUrl}}/orders/12
+Authorization: Bearer {{token}}
+
+### 获取用户所有订单
+GET {{baseUrl}}/orders/user/{{userId}}
+Authorization: Bearer {{token}}
+
+### 获取订单商品列表
+GET {{baseUrl}}/orders/12/items
+Authorization: Bearer {{token}}
+
+### 更新订单状态
+PUT {{baseUrl}}/orders/12/status
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "paid"
+}
+
+### 删除订单
+DELETE {{baseUrl}}/orders/6
+Authorization: Bearer {{token}}

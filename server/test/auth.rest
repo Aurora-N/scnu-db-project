@@ -1,17 +1,25 @@
-# POST http://localhost:3000/register
-# Content-Type: application/json
+### 鉴权API测试
 
-# {
-#   "phone_number": "12345678901",
-#   "username": "first_user",
-#   "password": "testpassword"
-# }
+@baseUrl = http://localhost:3000
+@phoneNumber = 12345678901
+@username = first_user
+@password = testpassword
 
-
-POST http://localhost:3000/login
+### 注册新用户
+POST {{baseUrl}}/register
 Content-Type: application/json
 
 {
-  "phone_number": "12345678901",
-  "password": "testpassword"
+  "phone_number": "{{phoneNumber}}",
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+### 登录
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "phone_number": "{{phoneNumber}}",
+  "password": "{{password}}"
 }

@@ -1,0 +1,78 @@
+### 商品API测试
+@baseUrl = http://localhost:3000
+@phoneNumber = 12345678901
+@password = testpassword
+
+### 登录获取token
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "phone_number": "{{phoneNumber}}",
+  "password": "{{password}}"
+}
+
+###
+@token = {{login.response.body.data.*}}
+@productId = 4
+@searchKeyword = 小米
+
+### 获取所有商品
+GET {{baseUrl}}/products
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### 按关键词搜索商品
+GET {{baseUrl}}/products/query/{{searchKeyword}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### 创建新商品
+POST {{baseUrl}}/products
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "小米 Su7",
+  "description": "你的第一台超跑",
+  "price": "399999",
+  "stock_quantity": "1"
+}
+
+### 更新商品信息
+PUT {{baseUrl}}/products/6
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id": "6",
+  "name": "小米 Yu7",
+  "description": "你的第一台SUV",
+  "price": "699999",
+  "stock_quantity": "2"
+}
+
+### 删除商品
+DELETE {{baseUrl}}/products/6
+Authorization: Bearer {{token}}
+
+### 获取商品分类
+GET {{baseUrl}}/products/{{productId}}/categories
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### 购买商品
+POST {{baseUrl}}/products/{{productId}}/buy
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "quantity": "1",
+  "shipping_address": "123 Main St, Anytown, USA"
+}
+
+### 取消商品订单
+POST {{baseUrl}}/products/order/16/cancel
+Content-Type: application/json
+Authorization: Bearer {{token}}
