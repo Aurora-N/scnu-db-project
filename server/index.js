@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.js";
 import productRoutes from "./routes/product.js"
 import categoryRoutes from "./routes/category.js"
 import orderRoutes from "./routes/order.js"
+import cartRoutes from "./routes/cart.js"
 import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(authRoutes);
 app.use(productRoutes);
 app.use(categoryRoutes);
 app.use(orderRoutes);
+app.use(cartRoutes);
 app.use(errorHandler);
 
 // 启动服务
