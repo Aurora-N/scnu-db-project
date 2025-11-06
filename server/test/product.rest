@@ -1,6 +1,20 @@
 ### 商品API测试
 @baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0NDM5NTAsImV4cCI6MTc2MjQ1MTE1MH0.umudpI4mWyG1qaxp0dySnn2QcCJJQJPVxd0l-q2iv6k
+@phoneNumber = 12345678901
+@password = testpassword
+
+### 登录获取token
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "phone_number": "{{phoneNumber}}",
+  "password": "{{password}}"
+}
+
+###
+@token = {{login.response.body.data.*}}
 @productId = 4
 @searchKeyword = 小米
 

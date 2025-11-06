@@ -23,5 +23,3 @@ Content-Type: application/json
   "phone_number": "{{phoneNumber}}",
   "password": "{{password}}"
 }
-
-# 登录并复制响应中的token来更新@token变量，可用于其他需要登录的API测试

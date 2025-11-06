@@ -1,22 +1,35 @@
 ### 商品分类管理测试
-
 @baseUrl = http://localhost:3000
-@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5MDEiLCJpYXQiOjE3NjI0Mjg1ODMsImV4cCI6MTc2MjQzNTc4M30.w8qDjalig_SE9Ims-igCdnm2Vo90Wg_a0bC-_p7gJyc
+@phoneNumber = 12345678901
+@password = testpassword
+
+### 登录获取token
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "phone_number": "{{phoneNumber}}",
+  "password": "{{password}}"
+}
+
+###
+@token = {{login.response.body.data.*}}
 
 ### 获取所有商品分类
 GET {{baseUrl}}/categories
 Content-Type: application/json
-Authorization: {{token}}
+Authorization: Bearer {{token}}
 
 ### 获取指定ID的商品分类
-GET {{baseUrl}}/categories/detail/1
+GET {{baseUrl}}/categories/detail/2
 Content-Type: application/json
-Authorization: {{token}}
+Authorization: Bearer {{token}}
 
 ### 创建商品分类
 POST {{baseUrl}}/categories
 Content-Type: application/json
-Authorization: {{token}}
+Authorization: Bearer {{token}}
 
 {
   "name": "衣服",
@@ -24,9 +37,9 @@ Authorization: {{token}}
 }
 
 ### 更新商品分类
-PUT {{baseUrl}}/categories/1
+PUT {{baseUrl}}/categories/2
 Content-Type: application/json
-Authorization: {{token}}
+Authorization: Bearer {{token}}
 
 {
   "name": "数码产品",
@@ -34,15 +47,15 @@ Authorization: {{token}}
 }
 
 ### 删除商品分类
-DELETE {{baseUrl}}/categories/1
-Authorization: {{token}}
+DELETE {{baseUrl}}/categories/2
+Authorization: Bearer {{token}}
 
 ### 获取分类下的所有商品
-GET {{baseUrl}}/categories/1/products
+GET {{baseUrl}}/categories/2/products
 Content-Type: application/json
-Authorization: {{token}}
+Authorization: Bearer {{token}}
 
 ### 获取分类详情（包含商品列表）
-GET {{baseUrl}}/categories/1/with-products
+GET {{baseUrl}}/categories/2/with-products
 Content-Type: application/json
-Authorization: {{token}}
+Authorization: Bearer {{token}}

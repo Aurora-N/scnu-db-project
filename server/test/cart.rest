@@ -1,0 +1,112 @@
+### 购物车API测试
+@baseUrl = http://localhost:3000
+@phoneNumber = 12345678901
+@password = testpassword
+
+### 登录获取token
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "phone_number": "{{phoneNumber}}",
+  "password": "{{password}}"
+}
+
+###
+@token = {{login.response.body.data.*}}
+@userId = 1
+@cartId = 1
+@productId = 1
+@cartItemId = 1
+
+### 获取用户的购物车信息（包含商品列表和总价）
+GET {{baseUrl}}/carts/user/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### 创建购物车
+POST {{baseUrl}}/carts
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "userId": "{{userId}}"
+}
+
+### 获取购物车摘要（总价、商品数量等）
+GET {{baseUrl}}/carts/{{cartId}}/summary
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### 获取购物车的所有商品
+GET {{baseUrl}}/carts/{{cartId}}/items
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### 添加商品到购物车
+POST {{baseUrl}}/carts/{{cartId}}/items
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "productId": "1",
+  "quantity": 2
+}
+
+### 添加另一个商品到购物车
+POST {{baseUrl}}/carts/{{cartId}}/items
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "productId": "2",
+  "quantity": 1
+}
+
+### 更新购物车商品数量
+PUT {{baseUrl}}/carts/items/{{cartItemId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 5
+}
+
+### 从购物车删除商品（通过购物车项目ID）
+DELETE {{baseUrl}}/carts/items/{{cartItemId}}
+Authorization: Bearer {{token}}
+
+### 从购物车删除商品（通过商品ID）
+DELETE {{baseUrl}}/carts/{{cartId}}/products/{{productId}}
+Authorization: Bearer {{token}}
+
+### 批量删除购物车商品
+POST {{baseUrl}}/carts/items/batch-delete
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "cartItemIds": [1, 2, 3]
+}
+
+### 清空购物车（保留购物车但删除所有商品）
+DELETE {{baseUrl}}/carts/{{cartId}}/clear
+Authorization: Bearer {{token}}
+
+### 使用购物车商品创建订单
+POST {{baseUrl}}/carts/{{cartId}}/checkout
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "shippingAddress": "123 Main St, Anytown, USA"
+}
+
+### 删除购物车
+DELETE {{baseUrl}}/carts/{{cartId}}
+Authorization: Bearer {{token}}
+
+### 删除用户的购物车
+DELETE {{baseUrl}}/carts/user/{{userId}}
+Authorization: Bearer {{token}}
