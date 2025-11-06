@@ -1,15 +1,48 @@
 import { pool } from "../db.js";
+import * as OrderBase from "./order/orderBaseModel.js";
+import * as OrderItem from "./order/orderItemModel.js";
 
-// 创建新订单
+// ============================================
+// 订单基础操作（从 orderBaseModel 导出）
+// ============================================
+
+export const getOrderById = OrderBase.getOrderById;
+export const getAllOrdersByUserId = OrderBase.getAllOrdersByUserId;
+export const deleteOrderById = OrderBase.deleteOrderById;
+export const updateOrderStatus = OrderBase.updateOrderStatus;
+export const updateOrderShippingAddress = OrderBase.updateOrderShippingAddress;
+export const getOrderTotalAmount = OrderBase.getOrderTotalAmount;
+export const getAllOrders = OrderBase.getAllOrders;
+export const getOrdersByStatus = OrderBase.getOrdersByStatus;
+
+// ============================================
+// 订单项目操作（从 orderItemModel 导出）
+// ============================================
+
+export const getOrderItemsByOrderId = OrderItem.getOrderItemsByOrderId;
+export const getOrderItemById = OrderItem.getOrderItemById;
+export const addOrderItem = OrderItem.addOrderItem;
+export const updateOrderItem = OrderItem.updateOrderItem;
+export const deleteOrderItem = OrderItem.deleteOrderItem;
+export const deleteAllOrderItems = OrderItem.deleteAllOrderItems;
+export const deleteOrderItemByProductId = OrderItem.deleteOrderItemByProductId;
+export const isProductInOrder = OrderItem.isProductInOrder;
+export const getOrderItemCount = OrderItem.getOrderItemCount;
+
+// ============================================
+// 组合操作（需要同时操作订单和订单项目）
+// ============================================
+
+// 创建新订单（包含订单项目）
 // items: [{ product_id, quantity, unit_price }, ...]
 export const createOrder = async (userId, shippingAddress, items) => {
-  console.log('createOrder:', userId, shippingAddress, items);
+  console.log('创建订单', userId, shippingAddress, items);
   
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
 
-    // 插入订单记录
+    // 创建订单记录
     const orderResult = await client.query(
       `INSERT INTO orders ("user_id", "shipping_address", "status") 
        VALUES ($1, $2, 'pending') 
@@ -20,7 +53,7 @@ export const createOrder = async (userId, shippingAddress, items) => {
     const order = orderResult.rows[0];
     const orderId = order.order_id;
 
-    // 批量插入订单项目
+    // 批量插入订单项目（在同一事务中）
     if (items && items.length > 0) {
       const orderItemsValues = [];
       const orderItemsParams = [];
@@ -39,11 +72,13 @@ export const createOrder = async (userId, shippingAddress, items) => {
         paramIndex += 4;
       });
 
-      await client.query(
-        `INSERT INTO order_items ("order_id", "product_id", "quantity", "unit_price") 
-         VALUES ${orderItemsValues.join(', ')}`,
-        orderItemsParams
-      );
+      const itemsQuery = `
+        INSERT INTO order_items ("order_id", "product_id", "quantity", "unit_price") 
+        VALUES ${orderItemsValues.join(', ')}
+        RETURNING "order_item_id", "order_id", "product_id", "quantity", "unit_price"
+      `;
+
+      await client.query(itemsQuery, orderItemsParams);
     }
 
     await client.query('COMMIT');
@@ -56,123 +91,21 @@ export const createOrder = async (userId, shippingAddress, items) => {
   }
 };
 
-// 通过ID获取订单详细信息
+// 通过ID获取订单详细信息（包含订单项目）
 export const getOrderInfoById = async (orderId) => {
-  const orderQuery = `
-    SELECT 
-      o."order_id",
-      o."user_id",
-      o."status",
-      o."created_at",
-      o."shipping_address",
-      u."username",
-      u."phone_number"
-    FROM orders o
-    LEFT JOIN users u ON o."user_id" = u."user_id"
-    WHERE o."order_id" = $1
-  `;
-
-  const itemsQuery = `
-    SELECT 
-      oi."order_item_id",
-      oi."product_id",
-      oi."quantity",
-      oi."unit_price",
-      p."name" AS product_name,
-      p."description" AS product_description
-    FROM order_items oi
-    LEFT JOIN products p ON oi."product_id" = p."product_id"
-    WHERE oi."order_id" = $1
-  `;
-
-  const orderResult = await pool.query(orderQuery, [orderId]);
+  const order = await OrderBase.getOrderById(orderId);
   
-  if (orderResult.rows.length === 0) {
+  if (!order) {
     return null;
   }
 
-  const order = orderResult.rows[0];
-  const itemsResult = await pool.query(itemsQuery, [orderId]);
+  const items = await OrderItem.getOrderItemsByOrderId(orderId);
   
   return {
     ...order,
-    items: itemsResult.rows
+    items
   };
 };
 
-// 查询用户的所有订单信息（包含订单项目统计）
-export const getAllOrdersByUserId = async (userId) => {
-  const query = `
-    SELECT 
-      o."order_id",
-      o."user_id",
-      o."status",
-      o."created_at",
-      o."shipping_address",
-      COUNT(oi."order_item_id") AS item_count,
-      COALESCE(SUM(oi."quantity" * oi."unit_price"), 0) AS total_amount
-    FROM orders o
-    LEFT JOIN order_items oi ON o."order_id" = oi."order_id"
-    WHERE o."user_id" = $1
-    GROUP BY o."order_id", o."user_id", o."status", o."created_at", o."shipping_address"
-    ORDER BY o."created_at" DESC
-  `;
-
-  const result = await pool.query(query, [userId]);
-  return result.rows;
-};
-
-// 删除订单（级联删除订单项目）
-export const deleteOrderById = async (orderId) => {
-  const query = `
-    DELETE FROM orders 
-    WHERE "order_id" = $1 
-    RETURNING "order_id"
-  `;
-
-  const result = await pool.query(query, [orderId]);
-  return result.rows.length > 0 ? result.rows[0] : null;
-};
-
-// 更新订单状态
-// status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled'
-export const updateOrderStatus = async (orderId, status) => {
-  const validStatuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
-  
-  if (!validStatuses.includes(status)) {
-    throw new Error(`Invalid status. Must be one of: ${validStatuses.join(', ')}`);
-  }
-
-  const query = `
-    UPDATE orders 
-    SET "status" = $1 
-    WHERE "order_id" = $2 
-    RETURNING "order_id", "user_id", "status", "created_at", "shipping_address"
-  `;
-
-  const result = await pool.query(query, [status, orderId]);
-  return result.rows.length > 0 ? result.rows[0] : null;
-};
-
-// 获取订单项目（包含商品详细信息）
-export const getOrderItemByOrderId = async (orderId) => {
-  const query = `
-    SELECT 
-      oi."order_item_id",
-      oi."order_id",
-      oi."product_id",
-      oi."quantity",
-      oi."unit_price",
-      p."name" AS product_name,
-      p."description" AS product_description,
-      p."price" AS current_price,
-      p."stock_quantity"
-    FROM order_items oi
-    LEFT JOIN products p ON oi."product_id" = p."product_id"
-    WHERE oi."order_id" = $1
-    ORDER BY oi."order_item_id"
-  `;
-
-  const result = await pool.query(query, [orderId]);
-  return result.rows;
-};
+// 向后兼容的别名（保持原有API）
+export const getOrderItemByOrderId = getOrderItemsByOrderId;

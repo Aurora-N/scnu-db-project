@@ -3,6 +3,8 @@ import { pool } from "../db.js";
 // 通过id获取商品信息
 export const getProductInfoById = async (id) => { 
   const result = await pool.query('SELECT * FROM products WHERE product_id = $1', [id]);
+  console.log('通过id获取商品信息', id,  result.rows);
+  
   return result.rows[0];
 };
 
