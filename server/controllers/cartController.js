@@ -70,7 +70,7 @@ export const deleteCart = asyncHandler(async (req, res) => {
     }
 
     res.json({
-      message: 'Cart deleted successfully',
+      _message: 'Cart deleted successfully',
       cart_id: deletedCart.cart_id,
     });
   } catch (error) {
@@ -92,7 +92,7 @@ export const deleteUserCart = asyncHandler(async (req, res) => {
     }
 
     res.json({
-      message: 'Cart deleted successfully',
+      _message: 'Cart deleted successfully',
       cart_id: deletedCart.cart_id,
     });
   } catch (error) {
@@ -114,7 +114,7 @@ export const clearCart = asyncHandler(async (req, res) => {
     }
 
     res.json({
-      message: 'Cart cleared successfully',
+      _message: 'Cart cleared successfully',
       cart,
     });
   } catch (error) {
@@ -226,7 +226,7 @@ export const removeItemFromCart = asyncHandler(async (req, res) => {
     }
 
     res.json({
-      message: 'Item removed from cart successfully',
+      _message: 'Item removed from cart successfully',
       cart_item_id: deletedItem.cart_item_id,
     });
   } catch (error) {
@@ -251,7 +251,7 @@ export const removeProductFromCart = asyncHandler(async (req, res) => {
     }
 
     res.json({
-      message: 'Product removed from cart successfully',
+      _message: 'Product removed from cart successfully',
       cart_item_id: deletedItem.cart_item_id,
     });
   } catch (error) {
@@ -273,7 +273,7 @@ export const removeBatchItems = asyncHandler(async (req, res) => {
     const deletedItems = await CartItemModel.deleteBatchCartItems(cartItemIds);
 
     res.json({
-      message: 'Items removed from cart successfully',
+      _message: 'Items removed from cart successfully',
       deleted_count: deletedItems.length,
       deleted_items: deletedItems,
     });
@@ -369,7 +369,7 @@ export const createOrderFromCart = asyncHandler(async (req, res) => {
     await CartModel.clearCart(cartId);
 
     res.status(201).json({
-      message: 'Order created successfully from cart',
+      _message: 'Order created successfully from cart',
       order,
     });
   } catch (error) {

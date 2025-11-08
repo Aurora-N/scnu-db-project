@@ -6,9 +6,9 @@ import asyncHandler from 'express-async-handler';
 // 通过id获取商品信息
 export const getProductInfoById = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const products = await ProductModel.getProductInfoById(id);
-  if (!products) return res.status(404).json({ _error: 'Product not found' });
-  res.json(products);
+  const product = await ProductModel.getProductInfoById(id);
+  if (!product) return res.status(404).json({ _error: 'Product not found' });
+  res.json(product);
 });
 
 // 通过名称查找商品信息

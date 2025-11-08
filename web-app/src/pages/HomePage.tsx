@@ -18,6 +18,7 @@ export default function Home() {
 
     setLoading(true);
     // Simulate API delay
+
     setTimeout(() => {
       const newProducts = Array.from({ length: 12 }, (_, i) => ({
         id: products.length + i,
