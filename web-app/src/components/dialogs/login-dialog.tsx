@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -118,6 +118,7 @@ function TabsDemo({ onTabChange }: TabsDemoProps) {
           userName: userInfo.user.username,
           phoneNumber: userInfo.user.phone_number,
           avatar: '',
+          created_at: userInfo.user.created_at,
         },
         response.token
       );
@@ -246,7 +247,7 @@ function TabsDemo({ onTabChange }: TabsDemoProps) {
             className={cn(errors.loginPhoneNumber && 'border-danger')}
           />
           {errors.loginPhoneNumber && (
-            <p className="text-danger text-sm">{errors.loginPhoneNumber}</p>
+            <p className="text-sm text-danger">{errors.loginPhoneNumber}</p>
           )}
         </div>
         <div className="space-y-2">
@@ -260,7 +261,7 @@ function TabsDemo({ onTabChange }: TabsDemoProps) {
             className={cn(errors.loginPassword && 'border-danger')}
           />
           {errors.loginPassword && (
-            <p className="text-danger text-sm">{errors.loginPassword}</p>
+            <p className="text-sm text-danger">{errors.loginPassword}</p>
           )}
         </div>
         <div className="mt-8 flex items-center justify-between">
@@ -289,7 +290,7 @@ function TabsDemo({ onTabChange }: TabsDemoProps) {
             className={cn(errors.registerPhoneNumber && 'border-danger')}
           />
           {errors.registerPhoneNumber && (
-            <p className="text-danger text-sm">{errors.registerPhoneNumber}</p>
+            <p className="text-sm text-danger">{errors.registerPhoneNumber}</p>
           )}
         </div>
         <div className="space-y-2">
@@ -303,7 +304,7 @@ function TabsDemo({ onTabChange }: TabsDemoProps) {
             className={cn(errors.registerUserName && 'border-danger')}
           />
           {errors.registerUserName && (
-            <p className="text-danger text-sm">{errors.registerUserName}</p>
+            <p className="text-sm text-danger">{errors.registerUserName}</p>
           )}
         </div>
         <div className="space-y-2">
@@ -317,7 +318,7 @@ function TabsDemo({ onTabChange }: TabsDemoProps) {
             className={cn(errors.registerPassword && 'border-danger')}
           />
           {errors.registerPassword && (
-            <p className="text-danger text-sm">{errors.registerPassword}</p>
+            <p className="text-sm text-danger">{errors.registerPassword}</p>
           )}
         </div>
         <div className="space-y-2">
@@ -331,7 +332,7 @@ function TabsDemo({ onTabChange }: TabsDemoProps) {
             className={cn(errors.registerConfirm && 'border-danger')}
           />
           {errors.registerConfirm && (
-            <p className="text-danger text-sm">{errors.registerConfirm}</p>
+            <p className="text-sm text-danger">{errors.registerConfirm}</p>
           )}
         </div>
         <div className="mt-8 flex">
@@ -356,6 +357,7 @@ interface LoginDialogProps {
 
 export default function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
   const [activeTab, setActiveTab] = useState<string>('login');
+  const { isLoggedIn } = useUserStore();
 
   // 根据当前 tab 获取标题
   const getTitle = () => {
@@ -366,6 +368,17 @@ export default function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
+
+  // 登录成功后自动关闭弹窗
+  useEffect(() => {
+    if (isLoggedIn && open) {
+      // 延迟关闭，让用户看到成功提示
+      const timer = setTimeout(() => {
+        onOpenChange(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoggedIn, open, onOpenChange]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

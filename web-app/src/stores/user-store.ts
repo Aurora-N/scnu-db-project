@@ -6,6 +6,7 @@ interface User {
   userName: string;
   phoneNumber: string;
   avatar: string;
+  created_at: string;
 }
 
 interface UserState {

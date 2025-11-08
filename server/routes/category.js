@@ -9,7 +9,7 @@ const router = express.Router();
 
 // 定义路由
 // 获取所有商品分类
-router.get(`${BASE_URL}`, apiAuthHandler, categoryController.queryAllCategory);
+router.get(`${BASE_URL}`, categoryController.queryAllCategory);
 
 // 获取指定ID的商品分类
 router.get(

@@ -44,8 +44,24 @@ export const deleteProductById = asyncHandler(async (req, res) => {
 
 // 查询所有商品
 export const queryAllProduct = asyncHandler(async (req, res) => {
+  const { limit, offset } = req.query;
+  const limitNum = limit ? parseInt(limit) : undefined;
+  const offsetNum = offset ? parseInt(offset) : undefined;
+
   const products = await ProductModel.queryAllProduct();
-  res.json({ products, total: products.length });
+  const total = products.length;
+
+  // 如果提供了分页参数，进行分页
+  let paginatedProducts = products;
+  if (limitNum !== undefined && offsetNum !== undefined) {
+    paginatedProducts = products.slice(offsetNum, offsetNum + limitNum);
+  }
+
+  res.json({
+    products: paginatedProducts,
+    total,
+    hasMore: offsetNum + limitNum < total,
+  });
 });
 
 // 修改商品信息
@@ -66,9 +82,25 @@ export const updateProductInfo = asyncHandler(async (req, res) => {
 // 通过分类获取商品信息
 export const getProductsByCategory = asyncHandler(async (req, res) => {
   const { categoryId } = req.params;
+  const { limit, offset } = req.query;
+  const limitNum = limit ? parseInt(limit) : undefined;
+  const offsetNum = offset ? parseInt(offset) : undefined;
+
   const products =
     await ProductCategoryModel.queryProductsByCategory(categoryId);
-  res.json({ products, total: products.length });
+  const total = products.length;
+
+  // 如果提供了分页参数，进行分页
+  let paginatedProducts = products;
+  if (limitNum !== undefined && offsetNum !== undefined) {
+    paginatedProducts = products.slice(offsetNum, offsetNum + limitNum);
+  }
+
+  res.json({
+    products: paginatedProducts,
+    total,
+    hasMore: offsetNum + limitNum < total,
+  });
 });
 
 // 购买商品

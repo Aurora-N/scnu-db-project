@@ -10,6 +10,12 @@ import type { Order } from '@/types/order';
 interface ProductListResponseData {
   products: Product[];
   total: number;
+  hasMore?: boolean;
+}
+
+interface PaginationParams {
+  limit?: number;
+  offset?: number;
 }
 
 interface BuyProductRequest {
@@ -19,7 +25,17 @@ interface BuyProductRequest {
 
 export const ProductApi = {
   // 查询所有商品
-  getAllProducts: () => get<ProductListResponseData>('/products'),
+  getAllProducts: (params?: PaginationParams) => {
+    const queryParams = new URLSearchParams();
+    if (params?.limit !== undefined)
+      queryParams.append('limit', params.limit.toString());
+    if (params?.offset !== undefined)
+      queryParams.append('offset', params.offset.toString());
+    const queryString = queryParams.toString();
+    return get<ProductListResponseData>(
+      `/products${queryString ? `?${queryString}` : ''}`
+    );
+  },
 
   // 通过id获取某个商品信息
   getProductById: (id: number) => get<Product>(`/products/detail/${id}`),
@@ -29,8 +45,17 @@ export const ProductApi = {
     get<ProductListResponseData>(`/products/query/${name}`),
 
   // 通过分类获取商品
-  getProductsByCategory: (categoryId: number) =>
-    get<ProductListResponseData>(`/products/category/${categoryId}`),
+  getProductsByCategory: (categoryId: number, params?: PaginationParams) => {
+    const queryParams = new URLSearchParams();
+    if (params?.limit !== undefined)
+      queryParams.append('limit', params.limit.toString());
+    if (params?.offset !== undefined)
+      queryParams.append('offset', params.offset.toString());
+    const queryString = queryParams.toString();
+    return get<ProductListResponseData>(
+      `/products/category/${categoryId}${queryString ? `?${queryString}` : ''}`
+    );
+  },
 
   // 创建商品
   createProduct: (data: CreateProductRequest) =>

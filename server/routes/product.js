@@ -9,7 +9,7 @@ const router = express.Router();
 
 // 定义路由
 // 查询所有商品
-router.get(`${BASE_URL}`, apiAuthHandler, productController.queryAllProduct);
+router.get(`${BASE_URL}`, productController.queryAllProduct);
 // 通过id获取某个商品信息
 router.get(
   `${BASE_URL}/detail/:id`,
@@ -17,15 +17,10 @@ router.get(
   productController.getProductInfoById
 );
 // 通过名称查询这个名称的所有商品
-router.get(
-  `${BASE_URL}/query/:name`,
-  apiAuthHandler,
-  productController.queryProductInfoByName
-);
+router.get(`${BASE_URL}/query/:name`, productController.queryProductInfoByName);
 // 通过分类获取商品
 router.get(
   `${BASE_URL}/category/:categoryId`,
-  apiAuthHandler,
   productController.getProductsByCategory
 );
 
@@ -72,7 +67,6 @@ router.delete(
 // 查询商品的所有分类
 router.get(
   `${BASE_URL}/:productId/categories`,
-  apiAuthHandler,
   productController.queryCategoriesByProduct
 );
 

@@ -3,15 +3,10 @@ import type React from 'react';
 
 import { useNavigate } from 'react-router';
 import { ShoppingCart, Heart } from 'lucide-react';
+import type { Product } from '@/types/product';
 
 interface ProductCardProps {
-  product: {
-    id: number;
-    name: string;
-    price: number;
-    image: string;
-    category: string;
-  };
+  product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
@@ -19,22 +14,27 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [isFavorite, setIsFavorite] = useState(false);
 
   const handleCardClick = () => {
-    navigate(`/product/${product.id}`);
+    navigate(`/product/${product.product_id}`);
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItem = cart.find((item: any) => item.id === product.id);
+    interface CartItem {
+      id: number;
+      name: string;
+      price: number;
+      quantity: number;
+    }
+    const cart: CartItem[] = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existingItem = cart.find((item) => item.id === product.product_id);
 
     if (existingItem) {
       existingItem.quantity += 1;
     } else {
       cart.push({
-        id: product.id,
+        id: product.product_id,
         name: product.name,
         price: product.price,
-        image: product.image,
         quantity: 1,
       });
     }
@@ -47,7 +47,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <div className="group cursor-pointer" onClick={handleCardClick}>
       <div className="relative mb-3 aspect-square overflow-hidden rounded-lg bg-secondary">
         <img
-          src={product.image || '/placeholder.svg'}
+          src={`/placeholder.svg?height=250&width=250&query=${encodeURIComponent(product.name)}`}
           alt={product.name}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
@@ -76,14 +76,14 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       <div>
-        <p className="mb-1 text-xs tracking-wide text-muted-foreground uppercase">
-          {product.category}
-        </p>
         <h3 className="truncate text-sm font-medium text-foreground">
           {product.name}
         </h3>
+        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+          {product.description}
+        </p>
         <p className="mt-2 text-lg font-semibold text-foreground">
-          ${product.price}
+          ￥ {product.price}
         </p>
       </div>
     </div>

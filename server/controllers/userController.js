@@ -1,4 +1,4 @@
-// 用户控制器，会暴露用户敏感信息，测试用
+// 用户控制器
 import * as UserModel from '../models/userModel.js';
 import asyncHandler from 'express-async-handler';
 
