@@ -11,14 +11,14 @@ export const getUserCart = asyncHandler(async (req, res) => {
   try {
     // 获取或创建购物车
     let cart = await CartModel.getCartByUserId(userId);
-    
+
     if (!cart) {
       cart = await CartModel.createCart(userId);
     }
 
     // 获取购物车项目
     const items = await CartItemModel.getCartItemsByCartId(cart.cart_id);
-    
+
     // 获取购物车摘要（总价等）
     const summary = await CartModel.getCartSummary(cart.cart_id);
 
@@ -30,8 +30,8 @@ export const getUserCart = asyncHandler(async (req, res) => {
       summary: {
         item_count: parseInt(summary.item_count),
         total_quantity: parseInt(summary.total_quantity),
-        total_amount: parseFloat(summary.total_amount)
-      }
+        total_amount: parseFloat(summary.total_amount),
+      },
     });
   } catch (error) {
     console.error('Error getting user cart:', error);
@@ -63,15 +63,15 @@ export const deleteCart = asyncHandler(async (req, res) => {
 
   try {
     const deletedCart = await CartModel.deleteCart(cartId);
-    
+
     if (!deletedCart) {
       res.status(404).json({ _error: 'Cart not found.' });
       return;
     }
 
-    res.json({ 
-      message: 'Cart deleted successfully', 
-      cart_id: deletedCart.cart_id 
+    res.json({
+      message: 'Cart deleted successfully',
+      cart_id: deletedCart.cart_id,
     });
   } catch (error) {
     console.error('Error deleting cart:', error);
@@ -85,15 +85,15 @@ export const deleteUserCart = asyncHandler(async (req, res) => {
 
   try {
     const deletedCart = await CartModel.deleteCartByUserId(userId);
-    
+
     if (!deletedCart) {
       res.status(404).json({ _error: 'Cart not found for this user.' });
       return;
     }
 
-    res.json({ 
-      message: 'Cart deleted successfully', 
-      cart_id: deletedCart.cart_id 
+    res.json({
+      message: 'Cart deleted successfully',
+      cart_id: deletedCart.cart_id,
     });
   } catch (error) {
     console.error('Error deleting user cart:', error);
@@ -107,15 +107,15 @@ export const clearCart = asyncHandler(async (req, res) => {
 
   try {
     const cart = await CartModel.clearCart(cartId);
-    
+
     if (!cart) {
       res.status(404).json({ _error: 'Cart not found.' });
       return;
     }
 
-    res.json({ 
-      message: 'Cart cleared successfully', 
-      cart 
+    res.json({
+      message: 'Cart cleared successfully',
+      cart,
     });
   } catch (error) {
     console.error('Error clearing cart:', error);
@@ -129,7 +129,9 @@ export const addItemToCart = asyncHandler(async (req, res) => {
   const { productId, quantity } = req.body;
 
   if (!productId || !quantity || quantity <= 0) {
-    res.status(400).json({ _error: 'Product ID and valid quantity are required.' });
+    res
+      .status(400)
+      .json({ _error: 'Product ID and valid quantity are required.' });
     return;
   }
 
@@ -156,9 +158,9 @@ export const addItemToCart = asyncHandler(async (req, res) => {
 
     // 添加商品到购物车
     const cartItem = await CartItemModel.addCartItem(
-      cartId, 
-      productId, 
-      quantity, 
+      cartId,
+      productId,
+      quantity,
       product.price
     );
 
@@ -195,8 +197,10 @@ export const updateCartItem = asyncHandler(async (req, res) => {
     }
 
     // 更新数量
-    const updatedItem = await CartItemModel.updateCartItem(cartItemId, { quantity });
-    
+    const updatedItem = await CartItemModel.updateCartItem(cartItemId, {
+      quantity,
+    });
+
     if (!updatedItem) {
       res.status(404).json({ _error: 'Cart item not found.' });
       return;
@@ -215,15 +219,15 @@ export const removeItemFromCart = asyncHandler(async (req, res) => {
 
   try {
     const deletedItem = await CartItemModel.deleteCartItem(cartItemId);
-    
+
     if (!deletedItem) {
       res.status(404).json({ _error: 'Cart item not found.' });
       return;
     }
 
-    res.json({ 
-      message: 'Item removed from cart successfully', 
-      cart_item_id: deletedItem.cart_item_id 
+    res.json({
+      message: 'Item removed from cart successfully',
+      cart_item_id: deletedItem.cart_item_id,
     });
   } catch (error) {
     console.error('Error removing item from cart:', error);
@@ -236,16 +240,19 @@ export const removeProductFromCart = asyncHandler(async (req, res) => {
   const { cartId, productId } = req.params;
 
   try {
-    const deletedItem = await CartItemModel.deleteCartItemByProductId(cartId, productId);
-    
+    const deletedItem = await CartItemModel.deleteCartItemByProductId(
+      cartId,
+      productId
+    );
+
     if (!deletedItem) {
       res.status(404).json({ _error: 'Product not found in cart.' });
       return;
     }
 
-    res.json({ 
-      message: 'Product removed from cart successfully', 
-      cart_item_id: deletedItem.cart_item_id 
+    res.json({
+      message: 'Product removed from cart successfully',
+      cart_item_id: deletedItem.cart_item_id,
     });
   } catch (error) {
     console.error('Error removing product from cart:', error);
@@ -264,11 +271,11 @@ export const removeBatchItems = asyncHandler(async (req, res) => {
 
   try {
     const deletedItems = await CartItemModel.deleteBatchCartItems(cartItemIds);
-    
-    res.json({ 
-      message: 'Items removed from cart successfully', 
+
+    res.json({
+      message: 'Items removed from cart successfully',
       deleted_count: deletedItems.length,
-      deleted_items: deletedItems
+      deleted_items: deletedItems,
     });
   } catch (error) {
     console.error('Error removing batch items:', error);
@@ -282,7 +289,7 @@ export const getCartSummary = asyncHandler(async (req, res) => {
 
   try {
     const summary = await CartModel.getCartSummary(cartId);
-    
+
     if (!summary) {
       res.status(404).json({ _error: 'Cart not found.' });
       return;
@@ -294,7 +301,7 @@ export const getCartSummary = asyncHandler(async (req, res) => {
       updated_at: summary.updated_at,
       item_count: parseInt(summary.item_count),
       total_quantity: parseInt(summary.total_quantity),
-      total_amount: parseFloat(summary.total_amount)
+      total_amount: parseFloat(summary.total_amount),
     });
   } catch (error) {
     console.error('Error getting cart summary:', error);
@@ -331,33 +338,39 @@ export const createOrderFromCart = asyncHandler(async (req, res) => {
     for (const item of cartItems) {
       const product = await ProductModel.getProductInfoById(item.product_id);
       if (!product) {
-        res.status(404).json({ _error: `Product ${item.product_id} not found.` });
+        res
+          .status(404)
+          .json({ _error: `Product ${item.product_id} not found.` });
         return;
       }
       if (product.stock_quantity < item.quantity) {
-        res.status(400).json({ 
-          _error: `Insufficient stock for product: ${product.name}. Available: ${product.stock_quantity}, Required: ${item.quantity}` 
+        res.status(400).json({
+          _error: `Insufficient stock for product: ${product.name}. Available: ${product.stock_quantity}, Required: ${item.quantity}`,
         });
         return;
       }
     }
 
     // 转换购物车商品为订单商品格式
-    const orderItems = cartItems.map(item => ({
+    const orderItems = cartItems.map((item) => ({
       product_id: item.product_id,
       quantity: item.quantity,
-      unit_price: item.unit_price
+      unit_price: item.unit_price,
     }));
 
     // 创建订单
-    const order = await OrderModel.createOrder(cart.user_id, shippingAddress, orderItems);
+    const order = await OrderModel.createOrder(
+      cart.user_id,
+      shippingAddress,
+      orderItems
+    );
 
     // 清空购物车
     await CartModel.clearCart(cartId);
 
     res.status(201).json({
       message: 'Order created successfully from cart',
-      order
+      order,
     });
   } catch (error) {
     console.error('Error creating order from cart:', error);

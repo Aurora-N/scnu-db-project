@@ -1,6 +1,6 @@
-import { pool } from "../db.js";
-import * as OrderBase from "./order/orderBaseModel.js";
-import * as OrderItem from "./order/orderItemModel.js";
+import { pool } from '../db.js';
+import * as OrderBase from './order/orderBaseModel.js';
+import * as OrderItem from './order/orderItemModel.js';
 
 // ============================================
 // 订单基础操作（从 orderBaseModel 导出）
@@ -37,7 +37,7 @@ export const getOrderItemCount = OrderItem.getOrderItemCount;
 // items: [{ product_id, quantity, unit_price }, ...]
 export const createOrder = async (userId, shippingAddress, items) => {
   console.log('创建订单', userId, shippingAddress, items);
-  
+
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -94,16 +94,16 @@ export const createOrder = async (userId, shippingAddress, items) => {
 // 通过ID获取订单详细信息（包含订单项目）
 export const getOrderInfoById = async (orderId) => {
   const order = await OrderBase.getOrderById(orderId);
-  
+
   if (!order) {
     return null;
   }
 
   const items = await OrderItem.getOrderItemsByOrderId(orderId);
-  
+
   return {
     ...order,
-    items
+    items,
   };
 };
 

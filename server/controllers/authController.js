@@ -3,7 +3,6 @@ import bcrypt from 'bcryptjs';
 import asyncHandler from 'express-async-handler';
 import { generateToken } from '../utils/token.js';
 
-
 // 用户注册
 export const register = asyncHandler(async (req, res) => {
   const { username, phone_number, password } = req.body;
@@ -17,14 +16,21 @@ export const register = asyncHandler(async (req, res) => {
   // 加密密码
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = await UserModel.createUser(username, phone_number, hashedPassword);
+  const newUser = await UserModel.createUser(
+    username,
+    phone_number,
+    hashedPassword
+  );
 
   // 生成 JWT
   const token = generateToken(newUser.user_id, newUser.phone_number);
 
-  res.status(201).json({ token, userId: newUser.user_id, _message: 'User created successfully' });
+  res.status(201).json({
+    token,
+    userId: newUser.user_id,
+    _message: 'User created successfully',
+  });
 });
-
 
 // 用户登录
 export const login = asyncHandler(async (req, res) => {
@@ -34,7 +40,8 @@ export const login = asyncHandler(async (req, res) => {
   if (!user) return res.status(400).json({ _message: 'User not found' });
 
   const isMatch = await bcrypt.compare(password, user.password_hash);
-  if (!isMatch) return res.status(400).json({ _message: 'Invalid credentials' });
+  if (!isMatch)
+    return res.status(400).json({ _message: 'Invalid credentials' });
 
   // 生成 JWT
   const token = generateToken(user.user_id, user.phone_number);

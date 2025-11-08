@@ -1,4 +1,4 @@
-import { pool } from "../../db.js";
+import { pool } from '../../db.js';
 
 // 获取订单项目（包含商品详细信息）
 export const getOrderItemsByOrderId = async (orderId) => {
@@ -86,12 +86,20 @@ export const addOrderItem = async (orderId, productId, quantity, unitPrice) => {
     RETURNING "order_item_id", "order_id", "product_id", "quantity", "unit_price"
   `;
 
-  const result = await pool.query(query, [orderId, productId, quantity, unitPrice]);
+  const result = await pool.query(query, [
+    orderId,
+    productId,
+    quantity,
+    unitPrice,
+  ]);
   return result.rows[0];
 };
 
 // 更新订单项目
-export const updateOrderItem = async (orderItemId, { quantity, unit_price }) => {
+export const updateOrderItem = async (
+  orderItemId,
+  { quantity, unit_price }
+) => {
   const updatableFields = { quantity, unit_price };
   const setClauses = [];
   const values = [];

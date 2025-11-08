@@ -1,6 +1,6 @@
-import pkg from "pg";
+import pkg from 'pg';
 const { Pool } = pkg;
-import { config } from "./utils/env.js";
+import { config } from './utils/env.js';
 
 // 创建连接池
 export const pool = new Pool({

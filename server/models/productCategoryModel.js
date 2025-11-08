@@ -1,4 +1,4 @@
-import { pool } from "../db.js";
+import { pool } from '../db.js';
 
 // 将某商品分配到某分类
 export const addCategoryToProduct = async (product_id, category_id) => {
@@ -24,7 +24,6 @@ export const addCategoryToProduct = async (product_id, category_id) => {
   return result.rows[0];
 };
 
-
 // 移除商品与分类的关联
 export const removeCategoryFromProduct = async (product_id, category_id) => {
   const result = await pool.query(
@@ -36,8 +35,7 @@ export const removeCategoryFromProduct = async (product_id, category_id) => {
 };
 
 // 查询某商品的所有分类
-export const queryCategoriesByProduct
- = async (product_id) => {
+export const queryCategoriesByProduct = async (product_id) => {
   const result = await pool.query(
     `SELECT c.*
      FROM categories c
@@ -49,8 +47,7 @@ export const queryCategoriesByProduct
 };
 
 // 查询某分类下的所有商品
-export const queryProductsByCategory
- = async (category_id) => {
+export const queryProductsByCategory = async (category_id) => {
   const result = await pool.query(
     `SELECT p.*
      FROM products p

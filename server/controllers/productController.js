@@ -14,14 +14,19 @@ export const getProductInfoById = asyncHandler(async (req, res) => {
 // 通过名称查找商品信息
 export const queryProductInfoByName = asyncHandler(async (req, res) => {
   const { name } = req.params;
-  const products = await ProductModel.queryProductInfoByName(name) || [];
+  const products = (await ProductModel.queryProductInfoByName(name)) || [];
   res.json({ products, total: products.length });
 });
 
 // 创建商品
 export const createProduct = asyncHandler(async (req, res) => {
   const { name, description, price, stock_quantity } = req.body;
-  const newProduct = await ProductModel.createProduct({ name, description, price, stock_quantity });
+  const newProduct = await ProductModel.createProduct({
+    name,
+    description,
+    price,
+    stock_quantity,
+  });
   res.status(201).json(newProduct);
 });
 
@@ -29,8 +34,12 @@ export const createProduct = asyncHandler(async (req, res) => {
 export const deleteProductById = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const deletedProduct = await ProductModel.deleteProductById(id);
-  if (!deletedProduct) return res.status(404).json({ _error: 'Product not found' });
-  res.json({ _message: 'Product deleted successfully', product: deletedProduct });
+  if (!deletedProduct)
+    return res.status(404).json({ _error: 'Product not found' });
+  res.json({
+    _message: 'Product deleted successfully',
+    product: deletedProduct,
+  });
 });
 
 // 查询所有商品
@@ -43,15 +52,22 @@ export const queryAllProduct = asyncHandler(async (req, res) => {
 export const updateProductInfo = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { name, description, price, stock_quantity } = req.body;
-  const updatedProduct = await ProductModel.updateProductInfo(id, { name, description, price, stock_quantity });
-  if (!updatedProduct) return res.status(404).json({ _error: 'Product not found' });
+  const updatedProduct = await ProductModel.updateProductInfo(id, {
+    name,
+    description,
+    price,
+    stock_quantity,
+  });
+  if (!updatedProduct)
+    return res.status(404).json({ _error: 'Product not found' });
   res.json(updatedProduct);
 });
 
 // 通过分类获取商品信息
 export const getProductsByCategory = asyncHandler(async (req, res) => {
   const { categoryId } = req.params;
-  const products = await ProductCategoryModel.queryProductsByCategory(categoryId);
+  const products =
+    await ProductCategoryModel.queryProductsByCategory(categoryId);
   res.json({ products, total: products.length });
 });
 
@@ -81,18 +97,20 @@ export const buyProduct = asyncHandler(async (req, res) => {
   }
 
   // 创建订单项目
-  const items = [{
-    product_id: productId,
-    quantity,
-    unit_price: product.price
-  }];
+  const items = [
+    {
+      product_id: productId,
+      quantity,
+      unit_price: product.price,
+    },
+  ];
 
   // 创建订单
   const order = await OrderModel.createOrder(userId, shipping_address, items);
 
   // 更新库存
   await ProductModel.updateProductInfo(productId, {
-    stock_quantity: product.stock_quantity - quantity
+    stock_quantity: product.stock_quantity - quantity,
   });
 
   res.status(201).json({ _message: 'Order created successfully', order });
@@ -111,7 +129,9 @@ export const cancelProductPurchase = asyncHandler(async (req, res) => {
 
   // 验证订单所有权
   if (order.user_id !== userId) {
-    return res.status(403).json({ _error: 'Unauthorized to cancel this order' });
+    return res
+      .status(403)
+      .json({ _error: 'Unauthorized to cancel this order' });
   }
 
   // 检查订单状态
@@ -127,14 +147,17 @@ export const cancelProductPurchase = asyncHandler(async (req, res) => {
   const orderItems = await OrderModel.getOrderItemsByOrderId(orderId);
 
   // 取消订单
-  const cancelledOrder = await OrderModel.updateOrderStatus(orderId, 'cancelled');
+  const cancelledOrder = await OrderModel.updateOrderStatus(
+    orderId,
+    'cancelled'
+  );
 
   // 恢复所有商品的库存
   for (const item of orderItems) {
     const product = await ProductModel.getProductInfoById(item.product_id);
     if (product) {
       await ProductModel.updateProductInfo(item.product_id, {
-        stock_quantity: product.stock_quantity + item.quantity
+        stock_quantity: product.stock_quantity + item.quantity,
       });
     }
   }
@@ -153,26 +176,40 @@ export const addCategoryToProduct = asyncHandler(async (req, res) => {
     return res.status(404).json({ _error: 'Product not found' });
   }
 
-  const relation = await ProductCategoryModel.addCategoryToProduct(productId, categoryId);
-  res.status(201).json({ _message: 'Category added to product successfully', relation });
+  const relation = await ProductCategoryModel.addCategoryToProduct(
+    productId,
+    categoryId
+  );
+  res
+    .status(201)
+    .json({ _message: 'Category added to product successfully', relation });
 });
 
 // 从商品移除分类
 export const removeCategoryFromProduct = asyncHandler(async (req, res) => {
   const { productId, categoryId } = req.params;
 
-  const removed = await ProductCategoryModel.removeCategoryFromProduct(productId, categoryId);
+  const removed = await ProductCategoryModel.removeCategoryFromProduct(
+    productId,
+    categoryId
+  );
   if (!removed) {
-    return res.status(404).json({ _error: 'Product-category relation not found' });
+    return res
+      .status(404)
+      .json({ _error: 'Product-category relation not found' });
   }
 
-  res.json({ _message: 'Category removed from product successfully', relation: removed });
+  res.json({
+    _message: 'Category removed from product successfully',
+    relation: removed,
+  });
 });
 
 // 查询商品的所有分类
 export const queryCategoriesByProduct = asyncHandler(async (req, res) => {
   const { productId } = req.params;
 
-  const categories = await ProductCategoryModel.queryCategoriesByProduct(productId);
+  const categories =
+    await ProductCategoryModel.queryCategoriesByProduct(productId);
   res.json({ categories, total: categories.length });
 });

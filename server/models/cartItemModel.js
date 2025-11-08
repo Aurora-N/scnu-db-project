@@ -1,4 +1,4 @@
-import { pool } from "../db.js";
+import { pool } from '../db.js';
 
 // 获取购物车的所有项目（包含商品详细信息）
 export const getCartItemsByCartId = async (cartId) => {
@@ -236,7 +236,9 @@ export const deleteBatchCartItems = async (cartItemIds) => {
   try {
     await client.query('BEGIN');
 
-    const placeholders = cartItemIds.map((_, index) => `$${index + 1}`).join(', ');
+    const placeholders = cartItemIds
+      .map((_, index) => `$${index + 1}`)
+      .join(', ');
     const result = await client.query(
       `DELETE FROM cart_items 
        WHERE "cart_item_id" IN (${placeholders})
@@ -246,7 +248,7 @@ export const deleteBatchCartItems = async (cartItemIds) => {
 
     if (result.rows.length > 0) {
       // 获取所有受影响的购物车ID并更新时间戳
-      const cartIds = [...new Set(result.rows.map(row => row.cart_id))];
+      const cartIds = [...new Set(result.rows.map((row) => row.cart_id))];
       for (const cartId of cartIds) {
         await client.query(
           'UPDATE carts SET "updated_at" = CURRENT_TIMESTAMP WHERE "cart_id" = $1',

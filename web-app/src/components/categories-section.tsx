@@ -1,23 +1,26 @@
 interface CategoriesSectionProps {
-  selectedCategory: string
-  onCategoryChange: (category: string) => void
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
 }
 
-export default function CategoriesSection({ selectedCategory, onCategoryChange }: CategoriesSectionProps) {
-  const categories = ["All", "Clothing", "Accessories", "Shoes", "Electronics"]
+export default function CategoriesSection({
+  selectedCategory,
+  onCategoryChange,
+}: CategoriesSectionProps) {
+  const categories = ['All', 'Clothing', 'Accessories', 'Shoes', 'Electronics'];
 
   return (
-    <section className="px-4 sm:px-6 lg:px-8 pb-12 border-b border-border">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+    <section className="border-b border-border px-4 pb-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-2">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => onCategoryChange(category)}
-              className={`px-6 py-2 rounded-full whitespace-nowrap transition-all text-sm font-medium ${
+              className={`rounded-full px-6 py-2 text-sm font-medium whitespace-nowrap transition-all ${
                 selectedCategory === category
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-foreground hover:bg-muted"
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-secondary text-foreground hover:bg-muted'
               }`}
             >
               {category}
@@ -26,5 +29,5 @@ export default function CategoriesSection({ selectedCategory, onCategoryChange }
         </div>
       </div>
     </section>
-  )
+  );
 }

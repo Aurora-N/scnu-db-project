@@ -1,14 +1,15 @@
 export default function HeroSection() {
   return (
-    <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto text-center">
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-foreground mb-4 text-balance leading-tight">
+    <section className="px-4 pt-32 pb-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl text-center">
+        <h1 className="mb-4 text-4xl leading-tight font-light text-balance text-foreground sm:text-5xl lg:text-6xl">
           Discover Innovation
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-balance">
-          Explore our curated collection of premium products designed for the modern lifestyle.
+        <p className="mx-auto max-w-2xl text-lg text-balance text-muted-foreground">
+          Explore our curated collection of premium products designed for the
+          modern lifestyle.
         </p>
       </div>
     </section>
-  )
+  );
 }

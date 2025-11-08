@@ -1,4 +1,4 @@
-import { pool } from "../../db.js";
+import { pool } from '../../db.js';
 
 // 通过ID获取订单基本信息（不包含订单项目）
 export const getOrderById = async (orderId) => {
@@ -69,10 +69,18 @@ export const deleteOrderById = async (orderId) => {
 // 更新订单状态
 // status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled'
 export const updateOrderStatus = async (orderId, status) => {
-  const validStatuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
-  
+  const validStatuses = [
+    'pending',
+    'paid',
+    'shipped',
+    'delivered',
+    'cancelled',
+  ];
+
   if (!validStatuses.includes(status)) {
-    throw new Error(`Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+    throw new Error(
+      `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+    );
   }
 
   const query = `
@@ -139,10 +147,18 @@ export const getAllOrders = async (limit = 100, offset = 0) => {
 
 // 按状态查询订单
 export const getOrdersByStatus = async (status, limit = 100, offset = 0) => {
-  const validStatuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
-  
+  const validStatuses = [
+    'pending',
+    'paid',
+    'shipped',
+    'delivered',
+    'cancelled',
+  ];
+
   if (!validStatuses.includes(status)) {
-    throw new Error(`Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+    throw new Error(
+      `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+    );
   }
 
   const query = `

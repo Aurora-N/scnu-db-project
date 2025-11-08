@@ -22,11 +22,24 @@
     "dev:all": "concurrently \"npm:dev:server\" \"npm:dev:web\"",
     "dev:server": "npm run dev -w @aurora-db-lab/server",
     "dev:web": "npm run dev -w @aurora-db-lab/web-app",
-    "build:web": "npm run build -w @aurora-db-lab/web-app"
+    "build:web": "npm run build -w @aurora-db-lab/web-app",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "keywords": [],
   "type": "module",
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "@eslint/js": "^9.39.1",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.22",
+    "globals": "^16.5.0",
+    "prettier": "^3.6.2",
+    "typescript-eslint": "^8.45.0"
   }
 }

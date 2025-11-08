@@ -12,15 +12,31 @@ router.post(BASE_URL, apiAuthHandler, orderController.createOrder);
 router.get(`${BASE_URL}/:id`, apiAuthHandler, orderController.getOrderInfoById);
 
 // 查询用户的所有订单信息
-router.get(`${BASE_URL}/user/:userId`, apiAuthHandler, orderController.getAllOrdersByUserId);
+router.get(
+  `${BASE_URL}/user/:userId`,
+  apiAuthHandler,
+  orderController.getAllOrdersByUserId
+);
 
 // 删除订单
-router.delete(`${BASE_URL}/:id`, apiAuthHandler, orderController.deleteOrderById);
+router.delete(
+  `${BASE_URL}/:id`,
+  apiAuthHandler,
+  orderController.deleteOrderById
+);
 
 // 更新订单状态
-router.put(`${BASE_URL}/:id/status`, apiAuthHandler, orderController.updateOrderStatus);
+router.put(
+  `${BASE_URL}/:id/status`,
+  apiAuthHandler,
+  orderController.updateOrderStatus
+);
 
 // 获取订单项目
-router.get(`${BASE_URL}/:id/items`, apiAuthHandler, orderController.getOrderItemByOrderId);
+router.get(
+  `${BASE_URL}/:id/items`,
+  apiAuthHandler,
+  orderController.getOrderItemByOrderId
+);
 
 export default router;

@@ -1,6 +1,6 @@
 // 导入 'pg' 库的 Client
-import { Client } from "pg";
-import { config } from "../utils/env.js";
+import { Client } from 'pg';
+import { config } from '../utils/env.js';
 
 // SQL DDL 语句
 const sqlScript = `
@@ -129,21 +129,21 @@ async function initializeDatabase() {
   try {
     // 连接数据库
     await client.connect();
-    console.log("🔌 正在连接到数据库...");
+    console.log('🔌 正在连接到数据库...');
 
     // 执行 SQL 脚本
-    console.log("🚀 正在运行数据库初始化脚本...");
+    console.log('🚀 正在运行数据库初始化脚本...');
     await client.query(sqlScript);
 
-    console.log("✅ 数据库初始化成功！所有表已创建。");
+    console.log('✅ 数据库初始化成功！所有表已创建。');
   } catch (error) {
     // 捕获并打印错误
-    console.error("❌ 数据库初始化失败:");
+    console.error('❌ 数据库初始化失败:');
     console.error(error.message);
   } finally {
     // 无论成功还是失败，最后都关闭连接
     await client.end();
-    console.log("🔌 数据库连接已关闭。");
+    console.log('🔌 数据库连接已关闭。');
   }
 }
 

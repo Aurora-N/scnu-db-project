@@ -1,81 +1,94 @@
-import { useState, useEffect } from "react"
-import { Link } from "react-router"
-import { Search } from "lucide-react"
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router';
+import { Search } from 'lucide-react';
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [cartCount, setCartCount] = useState(0)
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
+      setIsScrolled(window.scrollY > 50);
+    };
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Update cart count from localStorage
   useEffect(() => {
     const updateCartCount = () => {
-      const savedCart = localStorage.getItem("cart")
+      const savedCart = localStorage.getItem('cart');
       if (savedCart) {
-        const cart = JSON.parse(savedCart)
-        setCartCount(cart.length)
+        const cart = JSON.parse(savedCart);
+        setCartCount(cart.length);
       } else {
-        setCartCount(0)
+        setCartCount(0);
       }
-    }
+    };
 
-    updateCartCount()
-    window.addEventListener("storage", updateCartCount)
+    updateCartCount();
+    window.addEventListener('storage', updateCartCount);
 
     // Listen for custom cart update events
-    const handleCartUpdate = () => updateCartCount()
-    window.addEventListener("cartUpdated", handleCartUpdate)
+    const handleCartUpdate = () => updateCartCount();
+    window.addEventListener('cartUpdated', handleCartUpdate);
 
     return () => {
-      window.removeEventListener("storage", updateCartCount)
-      window.removeEventListener("cartUpdated", handleCartUpdate)
-    }
-  }, [])
+      window.removeEventListener('storage', updateCartCount);
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+    };
+  }, []);
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? "bg-background/95 backdrop-blur-md border-b border-border shadow-sm" : "bg-transparent"
+      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+        isScrolled
+          ? 'border-b border-border bg-background/95 shadow-sm backdrop-blur-md'
+          : 'bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="text-xl font-semibold text-foreground hover:text-primary transition-colors">
+          <Link
+            to="/"
+            className="text-xl font-semibold text-foreground transition-colors hover:text-primary"
+          >
             买买网
           </Link>
 
           {/* Search Bar - hidden on mobile */}
-          <div className="hidden md:flex flex-1 max-w-xs mx-8">
+          <div className="mx-8 hidden max-w-xs flex-1 md:flex">
             <div className="relative w-full">
               <input
                 type="text"
                 placeholder="Search products..."
-                className="w-full px-4 py-2 bg-secondary text-foreground placeholder-muted-foreground rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full rounded-lg bg-secondary px-4 py-2 text-sm text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary focus:outline-none"
               />
-              <Search className="absolute right-3 top-2.5 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute top-2.5 right-3 h-4 w-4 text-muted-foreground" />
             </div>
           </div>
 
           <div className="flex items-center gap-4">
             <Link
               to="/orders"
-              className="p-2 text-foreground hover:text-primary transition-colors text-sm font-medium"
+              className="p-2 text-sm font-medium text-foreground transition-colors hover:text-primary"
             >
               Orders
             </Link>
 
             {/* Cart Icon */}
-            <Link to="/cart" className="relative p-2 text-foreground hover:text-primary transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <Link
+              to="/cart"
+              className="relative p-2 text-foreground transition-colors hover:text-primary"
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -84,19 +97,19 @@ export default function Navbar() {
                 />
               </svg>
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground rounded-full text-xs flex items-center justify-center font-semibold">
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
                   {cartCount}
                 </span>
               )}
             </Link>
 
             {/* Avatar */}
-            <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
               JD
             </div>
           </div>
         </div>
       </div>
     </nav>
-  )
+  );
 }

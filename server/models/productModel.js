@@ -1,10 +1,13 @@
-import { pool } from "../db.js";
+import { pool } from '../db.js';
 
 // 通过id获取商品信息
-export const getProductInfoById = async (id) => { 
-  const result = await pool.query('SELECT * FROM products WHERE product_id = $1', [id]);
-  console.log('通过id获取商品信息', id,  result.rows);
-  
+export const getProductInfoById = async (id) => {
+  const result = await pool.query(
+    'SELECT * FROM products WHERE product_id = $1',
+    [id]
+  );
+  console.log('通过id获取商品信息', id, result.rows);
+
   return result.rows[0];
 };
 
@@ -16,12 +19,20 @@ export const queryAllProduct = async () => {
 
 // 通过名称查找商品信息
 export const queryProductInfoByName = async (name) => {
-  const result = await pool.query('SELECT * FROM products WHERE name ILIKE $1', [`%${name}%`]);
+  const result = await pool.query(
+    'SELECT * FROM products WHERE name ILIKE $1',
+    [`%${name}%`]
+  );
   return result.rows;
 };
 
 // 创建商品
-export const createProduct = async ({ name, description, price, stock_quantity }) => {
+export const createProduct = async ({
+  name,
+  description,
+  price,
+  stock_quantity,
+}) => {
   const result = await pool.query(
     'INSERT INTO products (name, description, price, stock_quantity) VALUES ($1, $2, $3, $4) RETURNING *',
     [name, description, price, stock_quantity]
@@ -31,12 +42,18 @@ export const createProduct = async ({ name, description, price, stock_quantity }
 
 // 删除商品
 export const deleteProductById = async (id) => {
-  const result = await pool.query('DELETE FROM products WHERE product_id = $1 RETURNING *', [id]);
+  const result = await pool.query(
+    'DELETE FROM products WHERE product_id = $1 RETURNING *',
+    [id]
+  );
   return result.rows[0];
 };
 
 // 修改指定id的商品信息
-export const updateProductInfo = async (productId, { name, description, price, stock_quantity }) => {
+export const updateProductInfo = async (
+  productId,
+  { name, description, price, stock_quantity }
+) => {
   const updatableFields = { name, description, price, stock_quantity };
   const setClauses = [];
   const values = [];
@@ -62,4 +79,4 @@ export const updateProductInfo = async (productId, { name, description, price, s
   );
 
   return result.rows[0];
-}
+};
