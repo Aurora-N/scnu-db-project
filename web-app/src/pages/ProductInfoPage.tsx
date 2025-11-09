@@ -1,74 +1,143 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { ShoppingCart, Heart, ArrowLeft, Star } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Loader2, Tag } from 'lucide-react';
+import { ProductApi } from '@/api/product-api';
+import { CartApi } from '@/api/cart-api';
+import { useUserStore } from '@/stores/user-store';
+import type { Product } from '@/types/product';
+import type { Category } from '@/types/category';
+import { toast } from 'sonner';
 
 export default function ProductInfoPage() {
   const { id: productId } = useParams();
-
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [quantity, setQuantity] = useState(1);
-  const [selectedImage, setSelectedImage] = useState(0);
-
   const navigate = useNavigate();
 
-  // Mock product data - in a real app, fetch based on productId
-  const product = {
-    id: productId,
-    name: 'Premium Wireless Headphones',
-    price: 199.99,
-    rating: 4.5,
-    reviews: 328,
-    category: 'Electronics',
-    images: [
-      '/premium-wireless-headphones.png',
-      '/headphones-side-view.png',
-      '/headphones-detail.jpg',
-      '/headphones-box.jpg',
-    ],
-    inStock: true,
-    sku: 'WH-PRO-2024',
-    description:
-      'Experience premium audio quality with our state-of-the-art wireless headphones. Featuring active noise cancellation, 30-hour battery life, and premium comfort for all-day wear.',
-    specifications: [
-      { label: 'Driver Size', value: '40mm' },
-      { label: 'Frequency Response', value: '20Hz - 20kHz' },
-      { label: 'Battery Life', value: '30 hours' },
-      { label: 'Charging Time', value: '2 hours' },
-      { label: 'Bluetooth Version', value: '5.3' },
-      { label: 'Weight', value: '250g' },
-    ],
-    features: [
-      'Active Noise Cancellation (ANC)',
-      'Premium comfort with memory foam ear cushions',
-      'Multi-device connectivity',
-      'Built-in microphone for calls',
-      'Foldable design with carrying case',
-      'Touch controls',
-    ],
-    shipping:
-      'Free shipping on orders over $100. Estimated delivery in 3-5 business days.',
-    warranty: '2-year manufacturer warranty included',
-  };
+  const [product, setProduct] = useState<Product | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [addingToCart, setAddingToCart] = useState(false);
 
-  const handleAddToCart = () => {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItem = cart.find((item: any) => item.id === product.id);
+  const { user, isLoggedIn } = useUserStore();
 
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      cart.push({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.images[0],
-        quantity: quantity,
-      });
+  // Fetch product data
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!productId) {
+        setError('Product ID is missing');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // 并行获取商品信息和分类
+        const [product, categoriesData] = await Promise.all([
+          ProductApi.getProductById(Number(productId)),
+          ProductApi.getCategoriesByProduct(Number(productId)).catch(() => ({
+            categories: [],
+            total: 0,
+          })),
+        ]);
+        
+        setProduct(product);
+        setCategories(categoriesData.categories);
+      } catch (err) {
+        console.error('Failed to fetch product:', err);
+        const errorMessage =
+          err && typeof err === 'object' && 'message' in err
+            ? String(err.message)
+            : '加载商品信息失败';
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [productId]);
+
+  const handleAddToCart = async () => {
+    if (!product) return;
+
+    // 检查是否登录
+    if (!isLoggedIn || !user) {
+      toast.error('请先登录后再加入购物车');
+      return;
     }
 
-    localStorage.setItem('cart', JSON.stringify(cart));
-    alert('Added to cart!');
+    // 检查库存
+    if (product.stock_quantity < quantity) {
+      toast.error('库存不足');
+      return;
+    }
+
+    try {
+      setAddingToCart(true);
+
+      // 获取用户购物车
+      const userCart = await CartApi.getUserCart(user.userId);
+      const cartId = userCart.cart_id;
+
+      // 添加商品到购物车
+      await CartApi.addItemToCart(cartId, {
+        productId: product.product_id,
+        quantity: quantity,
+      });
+
+      toast.success(`已添加 ${quantity} 件商品到购物车`);
+      setQuantity(1); // 重置数量
+    } catch (err) {
+      console.error('Failed to add to cart:', err);
+      const errorMessage =
+        err && typeof err === 'object' && 'message' in err
+          ? String(err.message)
+          : '加入购物车失败';
+      toast.error(errorMessage);
+    } finally {
+      setAddingToCart(false);
+    }
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 pt-24 sm:px-6 lg:px-8">
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            <p className="text-muted-foreground">正在加载商品信息...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error || !product) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 pt-24 sm:px-6 lg:px-8">
+        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+          <p className="text-lg text-destructive">
+            {error || 'Product not found'}
+          </p>
+          <button
+            onClick={() => navigate('/')}
+            className="rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition-opacity hover:opacity-90"
+          >
+            返回首页
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const inStock = product.stock_quantity > 0;
+  const images = ['/placeholder.svg'];
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 pt-24 sm:px-6 lg:px-8">
@@ -78,7 +147,7 @@ export default function ProductInfoPage() {
         className="mb-8 flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to Products
+        返回首页
       </button>
 
       <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -86,11 +155,11 @@ export default function ProductInfoPage() {
         <div className="flex flex-col gap-4">
           <div className="relative aspect-square overflow-hidden rounded-lg bg-secondary">
             <img
-              src={product.images[selectedImage] || '/placeholder.svg'}
+              src={images[selectedImage] || '/placeholder.svg'}
               alt={product.name}
               className="h-full w-full object-cover"
             />
-            {!product.inStock && (
+            {!inStock && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                 <p className="text-lg font-semibold text-white">Out of Stock</p>
               </div>
@@ -99,7 +168,7 @@ export default function ProductInfoPage() {
 
           {/* Thumbnail images */}
           <div className="flex gap-3">
-            {product.images.map((image, index) => (
+            {images.map((image, index) => (
               <button
                 key={index}
                 onClick={() => setSelectedImage(index)}
@@ -119,38 +188,40 @@ export default function ProductInfoPage() {
 
         {/* Product Info */}
         <div className="flex flex-col">
-          {/* Title and rating */}
+          {/* Title */}
           <div className="mb-6">
-            <p className="mb-2 text-xs tracking-wide text-muted-foreground uppercase">
-              {product.category}
-            </p>
             <h1 className="mb-3 text-3xl font-semibold text-foreground">
               {product.name}
             </h1>
-
-            {/* Rating */}
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex items-center gap-1">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 ${i < Math.floor(product.rating) ? 'fill-foreground text-foreground' : 'text-muted-foreground'}`}
-                  />
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-muted-foreground">
+                商品编号: {product.product_id}
+              </p>
+            </div>
+            
+            {/* Categories */}
+            {categories.length > 0 && (
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <Tag className="h-4 w-4 text-muted-foreground" />
+                {categories.map((category) => (
+                  <span
+                    key={category.category_id}
+                    className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-foreground"
+                  >
+                    {category.name}
+                  </span>
                 ))}
               </div>
-              <span className="text-sm text-muted-foreground">
-                {product.rating} ({product.reviews} reviews)
-              </span>
-            </div>
+            )}
           </div>
 
           {/* Price */}
           <div className="mb-6 border-b border-border pb-6">
             <p className="text-4xl font-bold text-foreground">
-              ${product.price.toFixed(2)}
+              ¥{product.price}
             </p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              SKU: {product.sku}
+            <p className="mt-2 text-sm text-muted-foreground">
+              库存: 还有 {product.stock_quantity} 件商品，欲购速从！
             </p>
           </div>
 
@@ -160,12 +231,13 @@ export default function ProductInfoPage() {
           {/* Quantity selector */}
           <div className="mb-6 flex items-center gap-4">
             <span className="text-sm font-medium text-foreground">
-              Quantity:
+              购买数量:
             </span>
             <div className="flex items-center rounded-lg border border-border">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="px-3 py-2 text-foreground transition-colors hover:bg-secondary"
+                disabled={!inStock}
+                className="px-3 py-2 text-foreground transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50"
               >
                 −
               </button>
@@ -173,8 +245,11 @@ export default function ProductInfoPage() {
                 {quantity}
               </span>
               <button
-                onClick={() => setQuantity(quantity + 1)}
-                className="px-3 py-2 text-foreground transition-colors hover:bg-secondary"
+                onClick={() =>
+                  setQuantity(Math.min(product.stock_quantity, quantity + 1))
+                }
+                disabled={!inStock || quantity >= product.stock_quantity}
+                className="px-3 py-2 text-foreground transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50"
               >
                 +
               </button>
@@ -185,88 +260,38 @@ export default function ProductInfoPage() {
           <div className="mb-8 flex gap-3">
             <button
               onClick={handleAddToCart}
-              disabled={!product.inStock}
+              disabled={!inStock || addingToCart}
               className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <ShoppingCart className="h-5 w-5" />
-              Add to Cart
-            </button>
-            <button
-              onClick={() => setIsFavorite(!isFavorite)}
-              className="rounded-lg border border-border px-6 py-3 transition-colors hover:bg-secondary"
-            >
-              <Heart
-                className={`h-5 w-5 ${isFavorite ? 'fill-destructive text-destructive' : 'text-foreground'}`}
-              />
+              {addingToCart ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <ShoppingCart className="h-5 w-5" />
+              )}
+              {addingToCart ? '添加中...' : '加入购物车'}
             </button>
           </div>
 
           {/* Stock status */}
-          <p className="mb-6 text-sm text-muted-foreground">
-            {product.inStock ? (
-              <span className="text-green-600">
-                In Stock - Ships in 1-2 business days
-              </span>
+          <p className="mb-6 text-sm">
+            {inStock ? (
+              <span className="text-green-600">✓ 库存充足</span>
             ) : (
-              <span className="text-destructive">Out of Stock</span>
+              <span className="text-destructive">✗ 库存不足</span>
             )}
           </p>
 
-          {/* Shipping and warranty */}
+          {/* Shipping info */}
           <div className="space-y-3 border-t border-border pt-6">
             <div>
               <p className="mb-1 text-xs font-semibold text-muted-foreground uppercase">
-                Shipping
+                运费与售后
               </p>
-              <p className="text-sm text-foreground">{product.shipping}</p>
-            </div>
-            <div>
-              <p className="mb-1 text-xs font-semibold text-muted-foreground uppercase">
-                Warranty
+              <p className="text-sm text-foreground">
+                此商品包邮，享7天无理由退货服务。
               </p>
-              <p className="text-sm text-foreground">{product.warranty}</p>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Specifications and Features */}
-      <div className="mb-12 grid grid-cols-1 gap-8 border-b border-border pb-12 lg:grid-cols-2">
-        {/* Specifications */}
-        <div>
-          <h2 className="mb-6 text-xl font-semibold text-foreground">
-            Specifications
-          </h2>
-          <div className="space-y-4">
-            {product.specifications.map((spec, index) => (
-              <div
-                key={index}
-                className="flex justify-between border-b border-border/50 py-2"
-              >
-                <span className="text-sm text-muted-foreground">
-                  {spec.label}
-                </span>
-                <span className="text-sm font-medium text-foreground">
-                  {spec.value}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Features */}
-        <div>
-          <h2 className="mb-6 text-xl font-semibold text-foreground">
-            Key Features
-          </h2>
-          <ul className="space-y-3">
-            {product.features.map((feature, index) => (
-              <li key={index} className="flex gap-3 text-sm text-foreground">
-                <span className="font-bold text-primary">✓</span>
-                {feature}
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </div>

@@ -105,7 +105,7 @@ export default function OrdersPage() {
         <Link to="/">
           <Button variant="ghost" size="sm" className="gap-2">
             <ArrowLeft className="h-4 w-4" />
-            Back to Shopping
+            继续购物
           </Button>
         </Link>
       </div>

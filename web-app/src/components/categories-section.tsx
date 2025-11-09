@@ -55,7 +55,7 @@ export default function CategoriesSection({
                 : 'bg-secondary text-foreground hover:bg-muted'
             }`}
           >
-            All
+            全部
           </button>
           {categories.map((category) => (
             <button

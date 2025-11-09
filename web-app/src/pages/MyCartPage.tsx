@@ -141,9 +141,8 @@ export default function MyCartPage() {
     (sum, item) => sum + item.unit_price * item.quantity,
     0
   );
-  const shipping = cartItems.length > 0 ? 10 : 0;
-  const tax = subtotal * 0.1;
-  const total = subtotal + shipping + tax;
+  const shipping = 0;
+  const total = subtotal + shipping;
 
   const handleCheckout = () => {
     if (!isLoggedIn) {
@@ -188,15 +187,15 @@ export default function MyCartPage() {
         <Link to="/">
           <Button variant="ghost" size="sm" className="gap-2">
             <ArrowLeft className="h-4 w-4" />
-            Continue Shopping
+            继续购物
           </Button>
         </Link>
       </div>
 
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-foreground">Shopping Cart</h1>
+        <h1 className="text-3xl font-bold text-foreground">购物车</h1>
         <span className="text-sm text-muted-foreground">
-          {cartItems.length} items
+          {cartItems.length} 件商品
         </span>
       </div>
 
@@ -237,10 +236,10 @@ export default function MyCartPage() {
                 onCheckedChange={toggleAllSelection}
                 className="h-4 w-4"
               />
-              <div className="flex-1">Product</div>
-              <div className="w-24 text-right">Price</div>
-              <div className="w-20 text-center">Qty</div>
-              <div className="w-24 text-right">Total</div>
+              <div className="flex-1">商品</div>
+              <div className="w-24 text-right">价格</div>
+              <div className="w-20 text-center">数量</div>
+              <div className="w-24 text-right">小计</div>
               <div className="w-10"></div>
             </div>
 
@@ -296,7 +295,8 @@ export default function MyCartPage() {
                     onClick={() =>
                       updateQuantity(item.cart_item_id, item.quantity + 1)
                     }
-                    className="flex h-6 w-6 items-center justify-center rounded border border-border text-xs transition-colors hover:bg-secondary"
+                    disabled={item.quantity >= item.product!.stock_quantity}
+                    className="flex h-6 w-6 items-center justify-center rounded border border-border text-xs transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     +
                   </button>
@@ -325,7 +325,7 @@ export default function MyCartPage() {
                 size="sm"
                 className="w-full"
               >
-                Delete Selected ({selectedItems.size})
+                删除选中的 {selectedItems.size} 件商品
               </Button>
             )}
           </div>
@@ -334,7 +334,7 @@ export default function MyCartPage() {
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-4 rounded-lg border border-border bg-card p-6">
               <h2 className="text-lg font-semibold text-foreground">
-                Order Summary
+                订单摘要
               </h2>
 
               <div className="space-y-3 text-sm">
@@ -345,10 +345,6 @@ export default function MyCartPage() {
                 <div className="flex justify-between text-muted-foreground">
                   <span>运费</span>
                   <span>¥{shipping.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-muted-foreground">
-                  <span>税费 (10%)</span>
-                  <span>¥{tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between border-t border-border pt-3 font-semibold text-foreground">
                   <span>总计</span>

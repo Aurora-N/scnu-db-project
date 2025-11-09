@@ -88,7 +88,6 @@ function AvatarDropdown() {
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
   const { searchQuery, setSearchQuery, clearSearch } = useSearchStore();
   const { isLoggedIn } = useUserStore();
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
@@ -100,31 +99,6 @@ export default function Navbar() {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Update cart count from localStorage
-  useEffect(() => {
-    const updateCartCount = () => {
-      const savedCart = localStorage.getItem('cart');
-      if (savedCart) {
-        const cart = JSON.parse(savedCart);
-        setCartCount(cart.length);
-      } else {
-        setCartCount(0);
-      }
-    };
-
-    updateCartCount();
-    window.addEventListener('storage', updateCartCount);
-
-    // Listen for custom cart update events
-    const handleCartUpdate = () => updateCartCount();
-    window.addEventListener('cartUpdated', handleCartUpdate);
-
-    return () => {
-      window.removeEventListener('storage', updateCartCount);
-      window.removeEventListener('cartUpdated', handleCartUpdate);
-    };
   }, []);
 
   return (
@@ -185,11 +159,6 @@ export default function Navbar() {
                   className="relative p-2 text-foreground transition-colors hover:text-primary"
                 >
                   <ShoppingCart className="h-6 w-6" />
-                  {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                      {cartCount}
-                    </span>
-                  )}
                 </Link>
 
                 {/* User Avatar with Dropdown */}

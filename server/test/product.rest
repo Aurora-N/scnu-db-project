@@ -76,3 +76,17 @@ Authorization: Bearer {{token}}
 POST {{baseUrl}}/products/order/16/cancel
 Content-Type: application/json
 Authorization: Bearer {{token}}
+
+### 为商品增加分类
+POST {{baseUrl}}/products/7/categories
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "categoryId": "4"
+}
+
+### 为商品删除分类
+DELETE {{baseUrl}}/products/1/categories/2
+Content-Type: application/json
+Authorization: Bearer {{token}}

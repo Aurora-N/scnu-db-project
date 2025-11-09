@@ -1,9 +1,11 @@
-import { useState } from 'react';
 import type React from 'react';
-
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { ShoppingCart, Heart } from 'lucide-react';
+import { ShoppingCart, Loader2 } from 'lucide-react';
 import type { Product } from '@/types/product';
+import { CartApi } from '@/api/cart-api';
+import { useUserStore } from '@/stores/user-store';
+import { toast } from 'sonner';
 
 interface ProductCardProps {
   product: Product;
@@ -11,36 +13,52 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const navigate = useNavigate();
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [addingToCart, setAddingToCart] = useState(false);
+  const { user, isLoggedIn } = useUserStore();
 
   const handleCardClick = () => {
     navigate(`/product/${product.product_id}`);
   };
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    interface CartItem {
-      id: number;
-      name: string;
-      price: number;
-      quantity: number;
-    }
-    const cart: CartItem[] = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItem = cart.find((item) => item.id === product.product_id);
 
-    if (existingItem) {
-      existingItem.quantity += 1;
-    } else {
-      cart.push({
-        id: product.product_id,
-        name: product.name,
-        price: product.price,
+    // 检查是否登录
+    if (!isLoggedIn || !user) {
+      toast.error('请先登录后再加入购物车');
+      return;
+    }
+
+    // 检查库存
+    if (product.stock_quantity < 1) {
+      toast.error('库存不足');
+      return;
+    }
+
+    try {
+      setAddingToCart(true);
+
+      // 获取用户购物车
+      const userCart = await CartApi.getUserCart(user.userId);
+      const cartId = userCart.cart_id;
+
+      // 添加商品到购物车
+      await CartApi.addItemToCart(cartId, {
+        productId: product.product_id,
         quantity: 1,
       });
-    }
 
-    localStorage.setItem('cart', JSON.stringify(cart));
-    alert('Added to cart!');
+      toast.success('已添加到购物车');
+    } catch (err) {
+      console.error('Failed to add to cart:', err);
+      const errorMessage =
+        err && typeof err === 'object' && 'message' in err
+          ? String(err.message)
+          : '加入购物车失败';
+      toast.error(errorMessage);
+    } finally {
+      setAddingToCart(false);
+    }
   };
 
   return (
@@ -52,26 +70,20 @@ export default function ProductCard({ product }: ProductCardProps) {
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
 
-        {/* Favorite button */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsFavorite(!isFavorite);
-          }}
-          className="absolute top-3 right-3 rounded-full bg-background/80 p-2 transition-colors hover:bg-background"
-        >
-          <Heart
-            className={`h-4 w-4 ${isFavorite ? 'fill-destructive text-destructive' : 'text-foreground'}`}
-          />
-        </button>
-
         {/* Add to cart button */}
         <button
           onClick={handleAddToCart}
-          className="absolute right-0 bottom-0 left-0 flex items-center justify-center gap-2 bg-primary px-4 py-2 text-primary-foreground opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          disabled={addingToCart || product.stock_quantity < 1}
+          className="absolute right-0 bottom-0 left-0 flex items-center justify-center gap-2 bg-primary px-4 py-2 text-primary-foreground opacity-0 transition-opacity duration-300 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <ShoppingCart className="h-4 w-4" />
-          <span className="text-sm font-medium">Add to Cart</span>
+          {addingToCart ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <ShoppingCart className="h-4 w-4" />
+          )}
+          <span className="text-sm font-medium">
+            {addingToCart ? '添加中...' : '加入购物车'}
+          </span>
         </button>
       </div>
 
