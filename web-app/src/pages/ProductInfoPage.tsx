@@ -34,7 +34,7 @@ export default function ProductInfoPage() {
       try {
         setLoading(true);
         setError(null);
-        
+
         // 并行获取商品信息和分类
         const [product, categoriesData] = await Promise.all([
           ProductApi.getProductById(Number(productId)),
@@ -43,7 +43,7 @@ export default function ProductInfoPage() {
             total: 0,
           })),
         ]);
-        
+
         setProduct(product);
         setCategories(categoriesData.categories);
       } catch (err) {
@@ -198,7 +198,7 @@ export default function ProductInfoPage() {
                 商品编号: {product.product_id}
               </p>
             </div>
-            
+
             {/* Categories */}
             {categories.length > 0 && (
               <div className="mt-3 flex flex-wrap items-center gap-2">

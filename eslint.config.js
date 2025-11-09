@@ -53,4 +53,11 @@ export default defineConfig([
       },
     },
   },
+  // 为 src/components/ui 目录下的文件禁用 react-refresh/only-export-components 规则
+  {
+    files: ['web-app/src/components/ui/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ]);
