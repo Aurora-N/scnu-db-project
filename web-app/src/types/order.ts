@@ -1,3 +1,5 @@
+import type { Product } from './product';
+
 /**
  * 订单状态类型
  * 对应数据库 ENUM: order_status
@@ -61,10 +63,19 @@ export interface OrderItem {
 export type CreateOrderItemRequest = Omit<OrderItem, 'order_item_id'>;
 
 /**
+ * 订单项目与商品信息合并后的类型
+ */
+export type MergedOrderItem = Omit<OrderItem, 'unit_price'> &
+  Omit<Product, 'name' | 'price'> & {
+    product_name: Product['name'];
+    unit_price: Product['price'];
+  };
+
+/**
  * 订单详情（包含订单项目）
  */
 export interface OrderWithItems extends Order {
-  items: OrderItem[];
+  items: MergedOrderItem[];
 }
 
 /**

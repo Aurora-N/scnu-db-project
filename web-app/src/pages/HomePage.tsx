@@ -42,8 +42,8 @@ export default function Home() {
         setProducts(newProducts);
       } else {
         setProducts((prev) => [...prev, ...newProducts]);
+        offset.current += PRODUCTS_PER_PAGE;
       }
-      offset.current += PRODUCTS_PER_PAGE;
 
       // Check if there are more products to load
       setHasMore(response.hasMore ?? newProducts.length === PRODUCTS_PER_PAGE);

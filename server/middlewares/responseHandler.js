@@ -12,7 +12,7 @@ export default function responseHandler(req, res, next) {
       return originalJson({
         status: 'success',
         message: typeof _message === 'string' ? _message : 'OK',
-        data,
+        data: Array.isArray(payload) ? payload : data,
       });
     }
 

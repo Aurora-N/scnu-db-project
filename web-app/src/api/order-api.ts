@@ -1,5 +1,10 @@
 import { get, post, put, del } from '@/lib/api-client';
-import type { Order, OrderItem, OrderStatus } from '@/types/order';
+import type {
+  MergedOrderItem,
+  Order,
+  OrderStatus,
+  OrderWithItems,
+} from '@/types/order';
 
 interface CreateOrderApiRequest {
   userId: number;
@@ -16,7 +21,7 @@ export const OrderApi = {
   createOrder: (data: CreateOrderApiRequest) => post<Order>('/orders', data),
 
   // 通过ID获取订单详细信息
-  getOrderById: (id: number) => get<Order>(`/orders/${id}`),
+  getOrderById: (id: number) => get<OrderWithItems>(`/orders/${id}`),
 
   // 查询用户的所有订单信息
   getOrdersByUserId: (userId: number) => get<Order[]>(`/orders/user/${userId}`),
@@ -34,5 +39,5 @@ export const OrderApi = {
   ) => put<{ message: string; order: Order }>(`/orders/${id}/status`, data),
 
   // 获取订单项目
-  getOrderItems: (id: number) => get<OrderItem[]>(`/orders/${id}/items`),
+  getOrderItems: (id: number) => get<MergedOrderItem[]>(`/orders/${id}/items`),
 };

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
 import { ShoppingCart, Heart, ArrowLeft, Star } from 'lucide-react';
 
 export default function ProductInfoPage() {
@@ -8,6 +8,8 @@ export default function ProductInfoPage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+
+  const navigate = useNavigate();
 
   // Mock product data - in a real app, fetch based on productId
   const product = {
