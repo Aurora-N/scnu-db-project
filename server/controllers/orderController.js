@@ -1,26 +1,38 @@
 import * as OrderModel from '../models/orderModel.js';
 import asyncHandler from 'express-async-handler';
-import { v4 as uuidv4 } from 'uuid'; // 导入 uuid
 
 // 创建新订单
 export const createOrder = asyncHandler(async (req, res) => {
   const { userId, shippingAddress, items } = req.body;
 
   // 验证输入
-  if (!userId || !shippingAddress || !items || !Array.isArray(items) || items.length === 0) {
-    res.status(400).json({ _error: 'Invalid order data. userId, shippingAddress, and items are required.' });
+  if (
+    !userId ||
+    !shippingAddress ||
+    !items ||
+    !Array.isArray(items) ||
+    items.length === 0
+  ) {
+    res.status(400).json({
+      _error:
+        'Invalid order data. userId, shippingAddress, and items are required.',
+    });
     return;
   }
 
   try {
     // 转换字段名：驼峰命名 -> 下划线命名
-    const formattedItems = items.map(item => ({
+    const formattedItems = items.map((item) => ({
       product_id: item.productId,
       quantity: item.quantity,
-      unit_price: item.unitPrice
+      unit_price: item.unitPrice,
     }));
 
-    const newOrder = await OrderModel.createOrder(userId, shippingAddress, formattedItems);
+    const newOrder = await OrderModel.createOrder(
+      userId,
+      shippingAddress,
+      formattedItems
+    );
     res.status(201).json(newOrder);
   } catch (error) {
     console.error('Error creating order:', error);
@@ -48,8 +60,12 @@ export const deleteOrderById = asyncHandler(async (req, res) => {
   const { id } = req.params;
   try {
     const deletedOrder = await OrderModel.deleteOrderById(id);
-    if (!deletedOrder) return res.status(404).json({ _error: 'Order not found' });
-    res.status(200).json({ message: 'Order deleted successfully', orderId: deletedOrder.order_id });
+    if (!deletedOrder)
+      return res.status(404).json({ _error: 'Order not found' });
+    res.status(200).json({
+      message: 'Order deleted successfully',
+      orderId: deletedOrder.order_id,
+    });
   } catch (error) {
     console.error('Error deleting order:', error);
     res.status(500).json({ _error: 'Failed to delete order.' });
@@ -67,16 +83,28 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   }
 
   // 验证状态是否有效，需要与数据库中的 ENUM 类型一致
-  const validStatuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
+  const validStatuses = [
+    'pending',
+    'paid',
+    'shipped',
+    'delivered',
+    'cancelled',
+  ];
   if (!validStatuses.includes(status)) {
-    res.status(400).json({ _error: `Invalid order status: ${status}. Valid statuses are: ${validStatuses.join(', ')}` });
+    res.status(400).json({
+      _error: `Invalid order status: ${status}. Valid statuses are: ${validStatuses.join(', ')}`,
+    });
     return;
   }
 
   try {
     const updatedOrder = await OrderModel.updateOrderStatus(id, status);
-    if (!updatedOrder) return res.status(404).json({ _error: 'Order not found' });
-    res.status(200).json({ message: 'Order status updated successfully', order: updatedOrder });
+    if (!updatedOrder)
+      return res.status(404).json({ _error: 'Order not found' });
+    res.status(200).json({
+      message: 'Order status updated successfully',
+      order: updatedOrder,
+    });
   } catch (error) {
     console.error('Error updating order status:', error);
     res.status(500).json({ _error: 'Failed to update order status.' });
@@ -89,4 +117,4 @@ export const getOrderItemByOrderId = asyncHandler(async (req, res) => {
   const orderItems = await OrderModel.getOrderItemByOrderId(id);
   if (!orderItems) return res.status(404).json({ _error: 'Order not found' });
   res.json(orderItems);
-}); 
+});

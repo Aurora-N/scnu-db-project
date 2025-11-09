@@ -1,4 +1,4 @@
-import { pool } from "../db.js";
+import { pool } from '../db.js';
 
 // 通过用户ID获取购物车信息
 export const getCartByUserId = async (userId) => {
@@ -134,10 +134,7 @@ export const clearCart = async (cartId) => {
     await client.query('BEGIN');
 
     // 删除所有购物车项目
-    await client.query(
-      'DELETE FROM cart_items WHERE "cart_id" = $1',
-      [cartId]
-    );
+    await client.query('DELETE FROM cart_items WHERE "cart_id" = $1', [cartId]);
 
     // 更新购物车时间戳
     const result = await client.query(

@@ -1,4 +1,4 @@
-// 用户控制器，会暴露用户敏感信息，测试用
+// 用户控制器
 import * as UserModel from '../models/userModel.js';
 import asyncHandler from 'express-async-handler';
 
@@ -13,7 +13,7 @@ export const getUserById = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const user = await UserModel.findUserById(id);
   if (!user) return res.status(404).json({ _error: 'User not found' });
-  res.json({ user, _message: "User founded" });
+  res.json({ user, _message: 'User founded' });
 });
 
 // 添加用户
@@ -28,7 +28,12 @@ export const createUser = asyncHandler(async (req, res) => {
 export const updateUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { username, phone_number, password_hash } = req.body;
-  const updatedUser = await UserModel.updateUser(id, username, phone_number, password_hash);
+  const updatedUser = await UserModel.updateUser(
+    id,
+    username,
+    phone_number,
+    password_hash
+  );
   if (!updatedUser) return res.status(404).json({ _error: 'User not found' });
   res.json({ user: updatedUser, _message: 'User updated' });
 });

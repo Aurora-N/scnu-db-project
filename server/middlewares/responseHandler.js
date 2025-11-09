@@ -10,25 +10,25 @@ export default function responseHandler(req, res, next) {
     if (isSuccess) {
       const { _message, ...data } = payload;
       return originalJson({
-        status: "success",
-        message: typeof _message === "string" ? _message : "OK",
-        data,
+        status: 'success',
+        message: typeof _message === 'string' ? _message : 'OK',
+        data: Array.isArray(payload) ? payload : data,
       });
     }
 
     // 错误消息处理
-    let errorMessage = "";
+    let errorMessage = '';
     if (payload) {
-      if (typeof payload._message === "string") {
+      if (typeof payload._message === 'string') {
         errorMessage = payload._message;
-      } else if (typeof payload._error === "string") {
+      } else if (typeof payload._error === 'string') {
         errorMessage = payload._error;
       }
     }
 
     return originalJson({
-      status: "error",
-      message: errorMessage || "An error occurred",
+      status: 'error',
+      message: errorMessage || 'An error occurred',
       data: null,
     });
   };

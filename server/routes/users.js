@@ -7,7 +7,6 @@ import { apiAuthHandler } from '../middlewares/apiAuthHandler.js';
 const BASE_URL = '/users';
 const router = express.Router();
 
-
 // 定义路由
 // 获取所有用户
 router.get(BASE_URL, apiAuthHandler, userController.getAllUsers);

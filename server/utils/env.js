@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
 // 加载环境变量
 dotenv.config();
@@ -6,8 +6,8 @@ dotenv.config();
 // 导出配置
 export const config = {
   // 服务器配置
-  PORT: process.env.PORT || "3000",
-  NODE_ENV: process.env.NODE_ENV || "development",
+  PORT: process.env.PORT || '3000',
+  NODE_ENV: process.env.NODE_ENV || 'development',
 
   // 数据库配置
   DB_HOST: process.env.DB_HOST,
