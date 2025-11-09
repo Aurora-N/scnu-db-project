@@ -11,11 +11,7 @@ const router = express.Router();
 // 查询所有商品
 router.get(`${BASE_URL}`, productController.queryAllProduct);
 // 通过id获取某个商品信息
-router.get(
-  `${BASE_URL}/detail/:id`,
-  apiAuthHandler,
-  productController.getProductInfoById
-);
+router.get(`${BASE_URL}/detail/:id`, productController.getProductInfoById);
 // 通过名称查询这个名称的所有商品
 router.get(`${BASE_URL}/query/:name`, productController.queryProductInfoByName);
 // 通过分类获取商品
