@@ -27,3 +27,8 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO ecom_admin; -- 
 cd server
 npm run init:db
 ```
+
+7. 插入Mock数据（可选）
+```bash
+npm run generate-mock-data
+```
