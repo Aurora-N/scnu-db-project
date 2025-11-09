@@ -196,7 +196,7 @@ export default function OrderDetailsPage() {
                   订单总额
                 </p>
                 <p className="mt-1 text-lg font-semibold text-foreground">
-                  ¥{total}
+                  ¥{total.toFixed(2)}
                 </p>
               </div>
             </div>
@@ -308,15 +308,21 @@ export default function OrderDetailsPage() {
           <div className="ml-auto max-w-sm space-y-3">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">小计</p>
-              <p className="font-medium text-foreground">¥{subtotal}</p>
+              <p className="font-medium text-foreground">
+                ¥{subtotal.toFixed(2)}
+              </p>
             </div>
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">运费</p>
-              <p className="font-medium text-foreground">¥{shipping}</p>
+              <p className="font-medium text-foreground">
+                ¥{shipping.toFixed(2)}
+              </p>
             </div>
             <div className="flex items-center justify-between pt-3">
               <p className="text-base font-semibold text-foreground">总计</p>
-              <p className="text-xl font-bold text-foreground">¥{total}</p>
+              <p className="text-xl font-bold text-foreground">
+                ¥{total.toFixed(2)}
+              </p>
             </div>
           </div>
         </div>

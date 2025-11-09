@@ -108,11 +108,7 @@ export default function SearchResults() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (
-          entries[0].isIntersecting &&
-          searchHasMore &&
-          !searchLoading
-        ) {
+        if (entries[0].isIntersecting && searchHasMore && !searchLoading) {
           loadMoreSearchResults();
         }
       },

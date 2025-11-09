@@ -183,7 +183,7 @@ export default function OrdersPage() {
                         总计
                       </p>
                       <p className="text-lg font-semibold text-foreground">
-                        ¥{total}
+                        ¥{total.toFixed(2)}
                       </p>
                     </div>
                   </div>

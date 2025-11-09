@@ -86,7 +86,6 @@ export default function Home() {
     isSearching,
   ]);
 
-
   // Infinite scroll observer for regular products
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -104,7 +103,6 @@ export default function Home() {
 
     return () => observer.disconnect();
   }, [loadMoreProducts, hasMore, loading, isSearching]);
-
 
   return (
     <>
