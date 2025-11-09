@@ -3,6 +3,7 @@ import HeroSection from '@/components/hero-section';
 import CategoriesSection from '@/components/categories-section';
 import ProductGrid from '@/components/product-grid';
 import Footer from '@/components/footer';
+import SearchResults from '@/components/search-results';
 import { ProductApi } from '@/api/product-api';
 import type { Product } from '@/types/product';
 import type { Category } from '@/types/category';
@@ -19,9 +20,7 @@ export default function Home() {
     useState<Category | null>(null);
   const offset = useRef(0);
   const observerTarget = useRef<HTMLDivElement>(null);
-  const { searchQuery, isSearching } = useSearchStore();
-  const [searchResults, setSearchResults] = useState<Product[]>([]);
-  const [searchLoading, setSearchLoading] = useState(false);
+  const { isSearching } = useSearchStore();
 
   // Load more products from API
   const loadMoreProducts = useCallback(async () => {
@@ -87,39 +86,12 @@ export default function Home() {
     isSearching,
   ]);
 
-  // Handle search
-  useEffect(() => {
-    const searchProducts = async () => {
-      if (!searchQuery.trim()) {
-        setSearchResults([]);
-        return;
-      }
 
-      setSearchLoading(true);
-      try {
-        const response = await ProductApi.getProductsByName(searchQuery.trim());
-        setSearchResults(response.products);
-      } catch (error) {
-        console.error('Failed to search products:', error);
-        setSearchResults([]);
-      } finally {
-        setSearchLoading(false);
-      }
-    };
-
-    // Debounce search
-    const timeoutId = setTimeout(() => {
-      searchProducts();
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
-
-  // Infinite scroll observer
+  // Infinite scroll observer for regular products
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading) {
+        if (entries[0].isIntersecting && hasMore && !loading && !isSearching) {
           loadMoreProducts();
         }
       },
@@ -131,7 +103,8 @@ export default function Home() {
     }
 
     return () => observer.disconnect();
-  }, [loadMoreProducts, hasMore, loading]);
+  }, [loadMoreProducts, hasMore, loading, isSearching]);
+
 
   return (
     <>
@@ -146,21 +119,7 @@ export default function Home() {
       )}
 
       {isSearching ? (
-        <section className="mt-16 px-4 py-12 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-foreground">
-                Search Results for "{searchQuery}"
-              </h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {searchLoading
-                  ? 'Searching...'
-                  : `Found ${searchResults.length} product${searchResults.length !== 1 ? 's' : ''}`}
-              </p>
-            </div>
-            <ProductGrid products={searchResults} loading={searchLoading} />
-          </div>
-        </section>
+        <SearchResults />
       ) : (
         <>
           <ProductGrid products={products} loading={loading} />

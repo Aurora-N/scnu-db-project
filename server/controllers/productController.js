@@ -14,8 +14,27 @@ export const getProductInfoById = asyncHandler(async (req, res) => {
 // 通过名称查找商品信息
 export const queryProductInfoByName = asyncHandler(async (req, res) => {
   const { name } = req.params;
+  const { limit, offset } = req.query;
+  const limitNum = limit ? parseInt(limit) : undefined;
+  const offsetNum = offset ? parseInt(offset) : undefined;
+
   const products = (await ProductModel.queryProductInfoByName(name)) || [];
-  res.json({ products, total: products.length });
+  const total = products.length;
+
+  // 如果提供了分页参数，进行分页
+  let paginatedProducts = products;
+  if (limitNum !== undefined && offsetNum !== undefined) {
+    paginatedProducts = products.slice(offsetNum, offsetNum + limitNum);
+  }
+
+  res.json({
+    products: paginatedProducts,
+    total,
+    hasMore:
+      limitNum && offsetNum !== undefined
+        ? offsetNum + limitNum < total
+        : false,
+  });
 });
 
 // 创建商品

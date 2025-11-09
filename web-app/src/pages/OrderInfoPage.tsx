@@ -130,9 +130,8 @@ export default function OrderDetailsPage() {
     (sum, item) => sum + item.unit_price * item.quantity,
     0
   );
-  const shipping = subtotal > 100 ? 0 : 10;
-  const tax = subtotal * 0.1;
-  const total = subtotal + shipping + tax;
+  const shipping = 0;
+  const total = subtotal + shipping;
 
   console.log('order', order);
 
@@ -314,10 +313,6 @@ export default function OrderDetailsPage() {
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">运费</p>
               <p className="font-medium text-foreground">¥{shipping}</p>
-            </div>
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <p className="text-sm text-muted-foreground">税费 (10%)</p>
-              <p className="font-medium text-foreground">¥{tax}</p>
             </div>
             <div className="flex items-center justify-between pt-3">
               <p className="text-base font-semibold text-foreground">总计</p>

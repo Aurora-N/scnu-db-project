@@ -41,8 +41,17 @@ export const ProductApi = {
   getProductById: (id: number) => get<Product>(`/products/detail/${id}`),
 
   // 通过名称查询商品
-  getProductsByName: (name: string) =>
-    get<ProductListResponseData>(`/products/query/${name}`),
+  getProductsByName: (name: string, params?: PaginationParams) => {
+    const queryParams = new URLSearchParams();
+    if (params?.limit !== undefined)
+      queryParams.append('limit', params.limit.toString());
+    if (params?.offset !== undefined)
+      queryParams.append('offset', params.offset.toString());
+    const queryString = queryParams.toString();
+    return get<ProductListResponseData>(
+      `/products/query/${name}${queryString ? `?${queryString}` : ''}`
+    );
+  },
 
   // 通过分类获取商品
   getProductsByCategory: (categoryId: number, params?: PaginationParams) => {
